@@ -1,0 +1,83 @@
+#  
+#   VizieR Astronomical Server vizier.u-strasbg.fr
+#    Date: 2013-09-13T21:21:19 [V1.97 (28-Nov-2012)]
+#   In case of problem, please report to: question@simbad.u-strasbg.fr
+# 
+#   
+#Coosys J2000: eq_FK5 J2000 
+#INFO votable-version=1.97 (28-Nov-2012) 
+#INFO -ref=VIZ5233812868e0 
+#INFO -out.max=unlimited 
+#INFO queryParameters=10 
+#-oc.form=sexa
+#-out.max=unlimited
+#-nav=cat:III/211&tab:{III/211/o2}&key:source=III/211/oh&HTTPPRM:&&-ref=VIZ5233812868e0&-out.max=50&-out.form=HTML Table&-oc.form=sexa&-order=I&-out=lambda&-out=nu'&-out=nu"&-out=Trans&-file=.&-meta.ucd=2&-meta=1&-meta.foot=1&-usenav=1&-bmark=POST&-out.src=III/211/oh&
+#-source= III/211/o2
+#-order=I
+#-out=lambda
+#-out=nu'
+#-out=nu"
+#-out=Trans
+#-out.src=III/211/oh
+#
+
+#RESOURCE=yCat_3211
+#Name: III/211
+#Title: Keck/HIRES Sky Line Atlas (Osterbrock+ 1997)
+#Table III_211_o2:
+#Name: III/211/o2
+#Title: Computed O2 lines (table 3 of Paper 1)
+#---Details of Columns:
+    lambda (0.1nm) (F8.2)  ? Computed wavelength of O2 line [ucd=em.wl]
+    Trans          (a6)    O2 line Transition [ucd=meta.id;phys.atmol.transition]
+-------- ------
+lambda         
+(0.1nm)  Trans 
+-------- ------
+         rQ(21)
+ 8609.98  R(21)
+ 8610.57 rQ(19)
+          R(19)
+         rQ(17)
+          R(17)
+ 8615.56 rQ(15)
+ 8617.15  R(15)
+         rQ(13)
+ 8619.95  R(13)
+ 8621.31 rQ(11)
+ 8622.91  R(11)
+ 8624.55 rQ( 9)
+ 8626.09  R( 9)
+         rQ( 7)
+ 8629.42  R( 7)
+ 8631.50 rQ( 5)
+ 8633.00  R( 5)
+ 8635.27 rQ( 3)
+ 8636.73  R( 3)
+ 8639.23 rQ( 1)
+ 8640.65  R( 1)
+ 8646.88  P( 1)
+         pQ( 3)
+ 8651.28  P( 3)
+ 8654.35 pQ( 5)
+ 8655.86  P( 5)
+ 8659.15 pQ( 7)
+ 8660.63  P( 7)
+ 8664.13 pQ( 9)
+ 8665.58  P( 9)
+ 8669.28 pQ(11)
+ 8670.73  P(11)
+ 8674.63 pQ(13)
+ 8676.07  P(13)
+ 8680.17 pQ(15)
+ 8681.59  P(15)
+ 8685.90 pQ(17)
+ 8687.30  P(17)
+ 8691.81 pQ(19)
+ 8693.22  P(19)
+         pQ(21)
+          P(21)
+ 8704.22 pQ(23)
+ 8705.61  P(23)
+
+#END#  -ref=VIZ5233812868e0 ================================================================================================================================================================================================================================================

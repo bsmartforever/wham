@@ -1,0 +1,76 @@
+pro read_MS_Micro, ms, save = save, ms_hi = ms_hi
+
+  ms = readblocklist('blocks.ha.top.txt', ext='ATMSUB')
+  if KEYWORD_SET(save) then save, ms, filename = '/d/wham/bsmart/MS/MS_top_ha.dat', /compress
+
+  	gal2mag,ms.glon,ms.glat,mlon,mlat
+
+    mlon_min = min(mlon, max = mlon_max)
+    mlat_min = min(mlat, max = mlat_max)
+
+    ; min_l=min_l+360
+    ; max_l=max_l+360
+
+
+    ; ms_hi = exthi(min_l, max_l, min_b, max_b, $
+    ;   vmin = 0, vmax = 0, DATADIR = '/d/wham/hi/lab_data', /wham, /magellanic)
+    ; print, 'hi'
+	dir='/d/data/hi/Nidever_Stream/'
+
+	hi_funky=restore_var(dir+'msfinal2.sav')
+  	hi=replicate({mlon:0.0,mlat:0.0,data:0.0,vel:0.0},n_elements(hi_funky.mlon))
+  	hi.mlon=hi_funky.mlon
+  	hi.mlat=hi_funky.mlat
+  	hi.data=hi_funky.par0*1.82240e+18
+  	hi.vel=hi_funky.par1
+  	undefine,hi_funky
+
+	num=n_elements(hi)
+	i=0
+		while i lt num do begin
+		  loc=where((hi[i].mlon eq hi.mlon) AND (hi[i].mlat eq hi.mlat),nloc)
+		  hi[i].data=total(hi[loc].data)
+		  if nloc gt 1 then begin
+		     remove,loc[1:*],hi
+		     num=num-(nloc-1)
+		  endif
+		   i++
+		endwhile
+
+			mapindex=where((hi.mlon le mlon_max-0.25) $
+           and (hi.mlon ge mlon_min+0.25) $
+           and (hi.mlat lt mlat_max-0.25) $
+           and (hi.mlat ge mlat_min+0.25),num_good)
+
+	hi=hi(mapindex)
+
+	mvel_min=float(round(min(hi.vel)))
+	mvel_max=float(round(max(hi.vel)))
+
+	hi_min=min(hi.data)
+	hi_max=max(hi.data)
+
+	mvel_min=float(round(min(hi.vel)))
+	mvel_max=float(round(max(hi.vel)))
+
+if KEYWORD_SET(save) then save, hi, filename = '/d/wham/bsmart/MS/MS_top_hi.dat', /compress
+
+	whammap,hi,0,0,alog10(hi.data),/useimage,/magellanic,$
+    charsize=1.0,charthick=charbig,$
+    /linear,$lonlabtop=avg([mlon_min,mlon_max]),$
+    ;lon_labels=2,$
+    ;lat_labels=2,$
+    zmin = zmin, zmax = zmax,$
+    scale = 1.2,/cbottom,$
+    ymargin=[10.5,5.5], xmargin=[8,8],$
+    beamradius = 0.3,$
+    limits=[mlon_min,mlon_max,mlat_min,mlat_max],smooth=1,smgrid=0.5,$
+    /noborder;,glondel=fix(width/2.),glatdel=fix(width/4.)
+
+    print, mlon_min, mlon_max
+
+
+
+if KEYWORD_SET(save) then save, hi, filename = '/d/wham/bsmart/MS/MS_top_hi.dat', /compress
+  
+end

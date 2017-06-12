@@ -1,0 +1,77 @@
+
+IMNORM (v5.2)	- violet cluster distribution
+K. Sembach, October 31, 2000				sembach@pha.jhu.edu
+-------------------------------------------------------------------------------
+
+Use of IMNORM(v5.2)
+-------------------
+
+Please replace existing copies of IMNORM with the following path
+specifications.  Delete your old copies and use the following 
+procedure for access.   Since so many people here at JHU are now using 
+IMNORM, I want to maintain one clean site where I can make modifications, 
+etc, without having to redistribute everything.
+
+If you have a copy of IMNORM, it should be because I gave it to you.  
+I request that you DO NOT distribute this software to others.  
+The reason for this is two-fold: First, I don't want a bunch of people 
+asking me questions (a few people asking questions is okay!).  Second, 
+I want to keep people using IMNORM aware of bugs and updates.  
+
+
+Introduction to IMNORM(v5.2):
+-----------------------------
+IMNORM(v5.2) is a set of IDL procedures and functions that I've used over
+the years for doing spectral line analysis.  This is a subset of a larger
+set of routines that hopefully I can make available in the near future.
+
+IMNORM is driven by simple keystroke commands.  It is invoked by typing
+
+IMNORM,filename     - where filename is the name of the file to be examined
+
+The file must be in a readable (i.e., IMNORM or HIAVE) format.  A sample file
+is included in the distribution.  The procedure IMSAVE can be used to put
+files into the proper format.
+
+Help can be invoked by hitting the "?" key inside IMNORM.  
+All of the IDL routines have information headers.  These can be viewed 
+directly, or by typing
+
+	MAN, routine	- where routine is the routine name 
+
+Alternately, just typing MAN at the IDL prompt will give you a nice widget
+help interface.
+
+
+Reporting Errors and Bugs
+-------------------------
+Please send any errors you find to me at sembach@pha.jhu.edu.
+
+
+Set Up
+------
+
+1) Remove previous versions of IMNORM and its subroutines since those
+   routines may (will) conflict with the current version.  Make sure 
+   these are removed completely from your path.
+
+2) Edit your .idlstartup file so that includes the following lines.
+
+     DEFSYSV,'!KRS_ROOTDIR','/data1/violet/sembach/imnormv5.2/',0
+     DEFSYSV,'!KRS_LINELIST',!KRS_ROOTDIR+'lists/uv_linelist.dat',0
+     !help_path= !KRS_ROOTDIR+'imnormv5.2/help:'+!help_path
+
+3) Make sure your .idlstartup file is located in your home directory or else
+   set the appropriate path with the unix environment variable IDL_STARTUP
+
+	Example: setenv IDL_STARTUP /home/sundoggie/sembach/.idlstartup
+
+4) Make sure that your IDL_PATH environment variable includes the imnormv5.2
+   directory.  I suggest that you make this the first directory in the path.
+
+	Example: setenv IDL_PATH +/data1/violet/sembach/imnormv5.2/:$IDL_PATH
+
+   Don't forget that leading "+" symbol.  It allows IDL to search down the
+   directory tree established by imnormv5.2.
+
+That should do it.  Enjoy.

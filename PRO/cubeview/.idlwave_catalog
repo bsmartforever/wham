@@ -1,0 +1,21 @@
+;;
+;; IDLWAVE catalog for library WhamLib
+;; Automatically Generated -- do not edit.
+;; Created by idlwave_catalog on Thu Apr  1 14:22:30 2004
+;;
+(setq idlwave-library-catalog-libname "WhamLib")
+(setq idlwave-library-catalog-routines
+ '(("MAIN13_Event" pro nil (lib "cubeview.pro" nil "WhamLib") "%s, Event" (nil))
+   ("cubeview" pro nil (lib "cubeview.pro" nil "WhamLib") "%s, initimage" (nil ("GROUP")))
+   ("load_data" pro nil (lib "load_data.pro" nil "WhamLib") "%s, state" (nil))
+   ("make_image" pro nil (lib "make_image.pro" nil "WhamLib") "%s, state" (nil))
+   ("play_movie" pro nil (lib "play_movie.pro" nil "WhamLib") "%s, state" (nil))
+   ("read_aric" pro nil (lib "read_aric.pro" nil "WhamLib") "%s, aric" (nil))
+   ("set_velocity" pro nil (lib "set_velocity.pro" nil "WhamLib") "%s, state" (nil))
+   ("spectrum_roi" pro nil (lib "spectrum_roi.pro" nil "WhamLib") "%s, state" (nil))
+   ("wham_curval" pro nil (lib "wham_curval.pro" nil "WhamLib") "%s, state, a, b, q" (nil))
+   ("XLCT_PSAVE" pro nil (lib "xloadct.pro" nil "WhamLib") "%s" (nil))
+   ("xlct_draw_cps" pro nil (lib "xloadct.pro" nil "WhamLib") "%s, i, c" (nil))
+   ("xlct_transfer" pro nil (lib "xloadct.pro" nil "WhamLib") "%s" (nil))
+   ("xloadct_event" pro nil (lib "xloadct.pro" nil "WhamLib") "%s, event" (nil))
+   ("XLoadct" pro nil (lib "xloadct.pro" nil "WhamLib") "%s" (nil ("FILE") ("GROUP") ("NCOLORS") ("PICK_ONE") ("SILENT") ("USE_CURRENT")))))

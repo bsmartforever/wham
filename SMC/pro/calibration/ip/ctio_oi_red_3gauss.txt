@@ -1,0 +1,13 @@
+# CTIO - [O I] Red
+
+# This is an instrument profile file. Line that start with hashes
+# are comments. Comments may be interspersed among the data below. The
+# first line of the file (sans comment character) will be treated as a
+# label to identify this profile (e.g. in a chooser widget). The
+# following lines should contain three columns: mean, FWHM, and height.
+# The total integrated area of the components in this profile must
+# equal 1.0.
+
+  -0.7118301000    9.1866932000    0.0392320000
+   1.4476471000   38.3871231000    0.0041512000
+   0.0616302000   16.7100296000    0.0251150000

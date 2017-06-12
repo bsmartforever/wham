@@ -1,0 +1,28 @@
+# WHAM Filters from wiki - 3/5/2013
+101,ha,Barr H-alpha,6567,Barr,B
+102,ha_omega,Omega H-alpha,6561,Omega,A
+103,ha_blue,Blue H-alpha,6554,Omega,A
+104,ha_red,Red H-alpha,6579,Barr,B
+105,ha_mc,MC H-alpha,6575,Barr,B
+201,hb,H-beta,4865,Omega,B
+202,oiii,[O III] 5007,5010,Omega,B
+203,nii_blue,[N II] 5755,5758,Omega,B
+204,hei,He I 5876,5877,Omega,A
+205,oi,[O I] 6300,6300,Omega,B
+206,nii,[N II] 6584,6587,Omega,B
+207,sii,[S II] 6716,6720,Omega,B
+208,fex,Fe X 6374,6377,Omega?,B
+209,oii,[O II] 7320,7323,Omega?,B
+210,ni,[N I] 5200,5202,Barr,B
+211,nii_mc,[N II] 6584,6594,Barr,B
+207,sii_mc,[S II] 6716,6726,Barr,B
+301,mgi_red (mgi),Mg I 5184,5184,Barr,C,8/2008: On leave at GSFC with Kutyrev |
+302,mgi_blue,Mg I 5173?,5179,Barr,C,8/2008: On leave at GSFC with Kutyrev |
+303,nai,Na I 5890,5893,Omega?,B
+304,h2o_plus,H2O+ 6159,6161,Omega?,C
+401,clear,Clear aperture,,,B
+402,opaque,Opaque blocker,,,B
+403,aperture,Reduced aperture,,,B
+#901,ha_mc_proposed,MC H-alpha,6573,Barr,B
+#902,nii_mc_proposed,MC [N II],6594,Barr,B
+#903,sii_mc_proposed,MC [S II],6727,Barr,B

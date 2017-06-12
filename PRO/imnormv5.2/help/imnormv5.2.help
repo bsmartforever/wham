@@ -1,0 +1,1377 @@
+      33
+FIND_FVAL      0
+FTEST          852
+IMATTR         1504
+IMATTS         3070
+IMAXIS         4693
+IMBLEM         5477
+IMCOL          6370
+IMCOL_PREP     7971
+IMCONT         9455
+IMCURS         10559
+IMEBAR         11181
+IMEQW          12267
+IMEQW_PREP     13514
+IMEXPND        14683
+IMGAUS         15449
+IMHELP         16237
+IMJOURNAL      16479
+IMMATH         16734
+IMNORM         17451
+IMOPLOT        18031
+IMREAD         18683
+IMREBIN        20283
+IMSAVE         21531
+IMSMEAR        22949
+IMSTAT2        23723
+IMSTAT_PREP    24714
+IMTRIM         26075
+IMUPDATE       27269
+IMYFIT         27902
+LEGERR         29239
+LEGFIT         29933
+LEGPOLY        30916
+XLIMIT         31483
+;+
+Kenneth Sembach
+                               FIND_FVAL.PRO
+                               Version 5.2
+Created: Unknown
+Last Revision: 07/19/94
+
+Program Description:
+	This function finds the f-value of the line with wavelength wave
+	in the file !krs_linelist.
+
+Restrictions:
+       None
+
+Screen Output:
+       Error text
+
+Use:
+       result = FIND_FVAL(wave,[tol])
+
+On Input:
+		wave	:== wavelength to search for
+		tol	:== wavelength tolerance (optional)
+On Output:
+               result  :== f-value of line with wavelength wave
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+       10/06/92  KRS   - Version 5.0, runs under Version 2 IDL.
+	07/19/94  KRS	- Version 5.1, updated to include comments at
+			  end of linelist.
+	05/02/99  KRS	- Version 5.2, updated comments for distribution
+
+External Routines called:
+       None
+;-
+;+
+Kenneth Sembach
+				FTEST.PRO
+
+Created: 04/23/91
+Last Revised: 10/08/92
+
+Program Description:
+	This function calculates the significance of a fit using the 
+ 	"f-test".  See Bevington (1969).
+
+Restrictions:
+	Limited number of degrees of freedom checked.  
+
+Screen Output:
+	None
+
+Use:
+	result = FTEST(nu,p)
+	
+On Input:
+		nu	:== number of degrees of freedom
+		p	:== significance level
+
+On Output:
+		result	:== result of ftest
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/08/92  KRS	- Version 5.0, runs under Version 2 IDL.
+			  INSERT commands removed in favor of simple
+			  array substitution.
+
+External Routines Called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMATTR.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revised: 05/02/92
+
+Program Description:
+	This procedure reads the attributes for spectra created with IMNORM.
+	The file must have a .att extension.  Error bars, fitting regions, 
+	and fit coefficients are recalled.
+
+Restrictions:
+	Point to point continuum error passed back as two arrays (lbar and
+	ubar).  This is to provide future flexibility, rather than being a
+	present restriction.
+
+Screen Output:
+	Text
+
+Use:
+	IMATTR,root,lbar,ubar,xarray,yarray,store,coeff,sigma,bsigma, $
+		coflag,ebflag,ftflag,updates	
+	
+On Input:
+		root	:== root of attribute file to be read
+		updates	:== update array for header (optional)
+On Ouptut:
+		lbar	:== lower error bar array 
+		ubar	:== upper error bar array
+		xarray	:== abscissa array for data points in fit
+		yarray	:== ordinate array for data points in fit
+		store	:== stored regions array (2-d)
+		coeff	:== fit coefficient array
+		sigma	:== RMS sigma of continuum fit
+		bsigma	:== reduced sigma for error bars (ebflag=1 only)
+		coflag	:== continuum region definition flag (0=no, 1=yes)
+		ebflag	:== error bar flag (0=no, 1=reduced, 2=Legendre)
+		ftflag	:== continiuum fit flag (0=no, 1=poly, 2=Legendre)
+		updates	:== revised update array
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- First version.
+	10/08/92  KRS	- Version 5.0, runs under Version 2 IDL.  Output
+			  simplified.  Number of parameters reduced.
+	05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMATTS.PRO
+				Version 5.2
+
+Created: 09/01/89
+Last Revised: 10/08/92
+
+Program Description:
+	This procedure writes the attributes for spectra creatyed with IMNORM.
+	The file has a .att extension.  Error bars, fitting regions, and
+	fit coefficients are written.
+
+Restrictions:
+	Point to point continuum error passed as two arrays (lbar and
+	ubar).  This is to provide future flexibility, rather than being a 
+	present restrixtion.
+
+Screen Output:
+	Text
+
+Use:
+	IMATTS,lbar,ubar,xarray,yarray,store,coeff,sigma,bsigma,$
+		coflag,ebflag,ftflag
+	
+On Input:
+		root	:== root of attribute file to be written
+	
+On Ouptut:
+               lbar    :== lower error bar array
+               ubar    :== upper error bar array
+               xarray  :== abscissa array for data points in fit
+               yarray  :== ordinate array for data points in fit
+               store   :== stored regions array (2-d)
+               coeff   :== fit coefficient array
+               sigma   :== RMS sigma of continuum fit
+               bsigma  :== reduced sigma for error bars (ebflag=1 only)
+               coflag  :== continuum region definition flag (0=no, 1=yes)
+               ebflag  :== error bar flag (0=no, 1=reduced, 2=Legendre)
+               ftflag  :== continiuum fit flag (0=no, 1=poly, 2=Legendre)
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Initial version.
+	10/08/92  KRS	- Version 5.0, runs under Version 2 IDl.  Parameter
+			  string shortened.  Output simplified.
+	05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMAXIS.PRO
+				Version 5.0
+Created: 09/01/89
+Last Revision:	10/06/92
+
+Program Description:
+	This function converts between wavelength and velocity space.
+	If an error is encountered, no message is printed but in_flag is
+	set to zero.
+
+Restrictions:
+	None	
+
+Screen Output: 
+	None
+
+Use:
+	result = IMAXIS(x,wavc,in_flag)
+
+On Input:
+		x	:== x coordinate array
+		wavc	:== laboratory wavelength of line
+		in_flag	:== (-1=lambda->velocity, +1=velocity->lambda) 
+On Output:
+		result	:== converted x coordinate array
+		in_flag :== 0 if wavc = 0
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/06/92  KRS	- Version 5.0, runs under Version 2 IDL.  
+			  Variable sys_flag removed.  Procedure converted
+			  to function.
+
+External Routines called:
+	None
+;-
+;+
+Kenneth Sembach
+                               IMTRIM.PRO
+                               Version 5.2
+Created: 09/01/89
+Last Revision: 05/02/99
+
+Program Description:
+       This program linearly interpolates across spectral regions identified
+	by the user with the mouse.
+
+Restrictions:
+       3-button mouse assumed
+
+Screen Output:
+       Text & Graphics
+
+Use:
+       IMBLEM,x,y,yorig,updates
+
+On Input:
+               x       :== x coordinate array
+               y       :== y coordinate array
+               updates :== update array
+On Output:
+               y       :== blemish corrected y coordinate array
+               yorig   :== original y coordinate array
+               updates :== updated updates
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines called:
+	XLIMIT
+;-
+;+
+Kenneth Sembach
+				IMCOL.PRO
+				Version5.2
+
+Created: Unknown
+Last Revised: 05/02/99
+
+Program Description:
+       This procedure calculates column densities and errors for
+       spectral lines given a fitted continuum with errors.  Column 
+	densities and errors are calculated using the integrated apparent
+	column density technique.
+
+Restrictions:
+       Error points in the ordinate array are assumed to be uncorrelated.
+       Error points in the continuum array are assumed to be correlated.
+
+Screen Output:
+       None
+
+Use:
+ 	IMCOL,x,y,ycon,y_sig,ycon_sig,wavc,fval,col,y_err,ycon_err,zero_err
+
+On Input:
+               x       :== abcissa array
+               y       :== ordinate array
+               ycon    :== fitted continuum array
+               y_sig   :== error array for ordinate
+               ycon_sig:== error array for fitted continuum
+		wavc	:== wavelength of line
+		fval	:== fvalue of line
+
+On Ouptut:
+               col     :== integrated column density
+               y_err   :== column density error due to y_sig
+               ycon_err:== column density error due to ycon_sig
+               zero_err:== column density error due to 2% background err
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+       01/28/93  KRS   - Version 5.0, runs under Version 2 IDL.
+       02/27/95  KRS   - Version 5.0, minor change to update endpoint widths.
+	03/26/96  KRS	- Version 5.X, background error calculation updated to
+			  empirical determination.
+	05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+       None
+;-
+;+
+Kenneth Sembach
+                               IMCOL_PREP.PRO
+                                 Version 5.2
+
+Created: Unknown
+Last Revised: 02/27/95
+
+Program Description:
+       This procedure is a driver for the routine IMCOL.PRO.  It determines
+       the integration range and type of noise to propagate through a line
+       during a column density  measurement and then displays results of
+       the calculation.
+
+Restrictions:
+       None
+
+Screen Output:
+       Text  &  Graphics
+
+Use:
+       IMCOL_PREP,x,y,ycon,sigma,ycon_sig,ebflag,wavc
+
+On Input:
+               x       :== velocity array
+               y       :== intensity array
+               ycon    :== continuum array
+               sigma   :== RMS sigma of continuum fit
+               ycon_sig:== continuum fit error array
+		ebflag 	:== error bar flag
+               wavc    :== laboratory wavelength of line
+
+On Ouptut:
+               None
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+	01/28/93  KRS  	- Version 5.0, runs under Version 2 IDL.
+                    	  Simplified commands.
+	02/25/95  KRS  	- End points of integration added to avoid truncation
+                      	  (ie., extend from xpos1 to xpos2)
+	05/02/99  KRS  	- Version 5.2, documentation updated for distribution
+                      	- Limit checking added
+
+External Routines Called:
+       IMCOL           - to calculate column density and errors
+       XLIMIT          - to determine elements of integration
+;-
+;+
+Kenneth Sembach
+				IMCONT.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revision: 05/02/99
+
+Program Description:
+	This procedure obtains and stores regions of the continuum for
+	later use in fitting a polynomial to the continuum.
+
+Restrictions:
+       Requires cursor (3 button mouse) input
+
+Screen Output:
+	Graphics  &  Text
+
+Use:
+	IMCONT,x,y,xarray,yarray,store,coflag
+
+On Input:
+		x	:== x coordinate array
+		y 	:== y coordinate array
+		xarray  :== defined x coordinate array
+		yarray  :== defined y coordinate array
+		store 	:== continuum region storage array (2xn)
+		coflag 	:== continuum definition flag (0=no,1=yes)
+
+On Output:
+		xarray  :== redefined x coordinate array
+		yarray  :== redefined y coordinate array
+		store 	:== new continuum region storage array (2xn)
+		coflag 	:== continuum definition flag (0=no,1=yes)
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/07/92  KRS	- Version 5.0, runs under Version 2 IDL.  	
+	05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	XLIMIT		- To determine the elements  of marked regions
+;-
+;+
+Kenneth Sembach
+				IMCURS.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revised: 05/02/92
+
+Program Description:
+	This procedure reads the cursor position from the current X window.
+	Coordinates are read in data coordinates. 
+ 
+Restrictions:
+	Only works with 3 button mouse.  Use right mouse button to exit.
+
+Screen Output: 
+	Graphics  &  Text
+
+Use:
+	IMCURS
+
+On Input:
+	None
+
+On Output:
+	None
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/07/92  KRS	- Version 5.0, runs under Version 2 IDL.
+       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMEBAR.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revision:	10/08/92
+
+Program Description:
+	This program allows manipulation of error bars given a known sigma,
+	the x and y arrays, and the fit array. 
+
+Restrictions:
+	Only error bars obeying RMS shift can be produced.
+
+Screen Output: 
+	Text  &  Graphics
+
+Use:
+	IMEBAR,x,y,ycon,sigma,b_sigma,lbar,ubar,ebflag
+
+On Input:
+	x	  :== x coordinate array
+	y	  :== y coordinate array
+	ycon	  :== y fitted coordinate array
+	sigma	  :== sigma of fit 
+	b_sigma   :== sigma for ebars
+	lbar	  :== lower error bar array if defined
+	ubar      :== upper error bar array if defined
+	ebflag	  :== error bar flag (0=undefined, 1=RMS)
+
+On output:
+	b_sigma   :== sigma for ebars
+	lbar	  :== revised y lower error bar array
+	ubar   	  :== revised y upper error bar array
+	ebflag	  :== error bar flag (0=undefined,1=defined)
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+       10/08/92  KRS   - Early updates
+       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMEQW.PRO
+				Version5.2
+
+Created: Unknown
+Last Revised: 05/02/99
+
+Program Description:
+	This procedure calculates equivalent widths and errors for
+	spectral lines given a fitted continuum with errors.  If no errors
+	are to be calculated, only the first five parameters need to be 
+	passed.  
+
+Restrictions:
+	Error points in the ordinate array are assumed to be uncorrelated.
+	Error points in the continuum array are assumed to be correlated.
+	
+Screen Output:
+	None
+
+Use:
+	IMEQW,x,y,ycon,y_sig,ycon_sig,ew,y_err,ycon_err,zero_err
+	
+On Input:
+		x	:== abcissa array (in Angstroms)
+		y	:== ordinate array 
+		ycon	:== fitted continuum array
+		y_sig	:== error array for ordinate
+		ycon_sig:== error array for fitted continuum
+
+On Ouptut:
+		ew	:== equivalent width
+		y_err	:== error in equivalent width due to y_sig
+		ycon_err:== error in equivalent width due to ycon_sig
+		zero_err:== error in equivalent width due to 2% background err
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/08/92  KRS	- Version 5.0, runs under Version 2 IDL.
+	02/27/95  KRS	- Version 5.0, minor change to update endpoint widths.
+	05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMEQW_PREP.PRO
+				Version 5.2
+
+Created: Unknown
+Last Revised: 05/02/99
+
+Program Description:
+	This procedure is a driver for the routine IMEQW.PRO.  It determines
+	the integration range and type of noise to propagate through a line 
+	during an equivalent width measurement and then displays results of 
+	the calculation.
+
+Restrictions:
+	None  
+
+Screen Output:
+	Text  &  Graphics
+
+Use:
+	IMEQW_PREP,x,y,ycon,sigma,ycon_sig,wavc
+	
+On Input:
+		x	:== wavelength array
+		y	:== intensity array
+		ycon	:== continuum array
+		sigma	:== RMS sigma of continuum fit
+		ycon_sig:== continuum fit error array
+		wavc	:== laboratory wavelength of line
+
+On Ouptut:
+		None
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/014/92  KRS	- Version 5.0, runs under Version 2 IDL.
+			  Simplified commands.
+	02/25/95   KRS	- End points of integration added to avoid truncation
+			  (ie., extend from xpos1 to xpos2)
+	05/02/99   KRS  - Version 5.2, documentation updated for distribution
+	               	- Limit checking added
+
+External Routines Called:
+	IMEQW		- to calculate equivalent width and errors
+	XLIMIT		- to determine elements of integration
+;-
+;+
+Kenneth Sembach
+				IMEXPND.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revision:	02/17/95
+
+Program Description:
+	This procedure allows interactive expansion of a plot in the current
+	X window.
+
+Screen Output: 
+	Text  &  Graphics
+
+Use:
+	IMEXPND,x,y
+
+On Input:
+		x	:== x coordinate array
+		y 	:== y coordinate array
+On Output:
+	None
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Version 3.0
+	03/20/91  KRS   - Version 4.0, y-axis now expanded too.
+	10/07/92  KRS	- Version 5.0, runs under Version 2 IDL.
+	05/02/94  KRS	- Version 5.1, fast x and y scaling added.
+	02/17/95  KRS	- Version 5.1, x-axis checking to eliminate errors.
+	05/02/99  KRS	- Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMGAUS.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revision:	05/02/99
+
+Program Description:
+	This program fits a Gaussian + 2nd order polynomial to a region of the
+	spectrum defined by the user.  An option to plot the fit is
+	available.
+
+Restrictions:
+	None
+
+Screen Output: 
+	Graphics text
+
+Use:
+	IMGAUS,x,y
+
+On Input:
+		x	:== x coordinate array
+		y 	:== y coordinate array
+On Output:
+	No output variables
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Test version.
+	03/20/91  KRS   - Version 4.0, first working version.
+	11/17/92  KRS	- version 5.0, runs under IDL version 2.0.
+
+External Routines Called:
+	GAUSSFIT	- to do gaussian fitting (user library)
+	POLY 		- to form polynomial (user library)
+	XLIMIT		- to get limits of fit
+;-
+;+
+Kenneth Sembach
+                                IMHELP.PRO
+                                Version 5.2
+Created: 7/24/93
+Last Revision: 05/02/99
+
+Program Description:
+	Prints help file for procedure IMNORM, nothing fancy, no parameters.
+;-
+;+
+Kenneth Sembach
+                               IMJOURNAL.PRO
+                                Version 5.2
+Created: 7/24/93
+Last Revision: 05/02/99
+Maintains session log for procedure IMNORM, nothing fancy.
+Updates file counter to prevent overwrites.
+;-
+;+
+Kenneth Sembach
+				IMMATH.PRO
+				Version 5.2
+Created: 09/01/89
+Last Modified: /05/02/99
+
+Description:
+	This routine performs various mathematical operations on a 
+	spectrum.  
+
+Screen Output: Graphics text
+
+Use:
+	IMMATH,x,y
+
+On Input:
+		x	:== x coordinate array
+		y	:== y coordinate array
+
+On Output:
+		y	:== y coordinate array after mathematical operation
+
+Common Blocks:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Version 3.0
+	03/20/91  KRS   - Version 4.0, help option added, replace value
+			  option added.
+	05/18/94  KRS	- Version 5.1, runs under Version 2 IDL.  Update list
+			  included.
+	05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines called:
+	IMUPDATE
+;-
+;+
+Kenneth Sembach
+                                IMNORM.PRO
+                                Version 5.2
+Created: Early 1990s
+Last Revision: 05/02/99
+
+Program Description:
+       This procedure is a general purpose tool to analyze spectral lines.
+
+Restrictions:
+       Many
+
+Screen Output: 
+       Text + Graphics 
+
+Use:
+       IMNORM,root
+
+On Input:
+               root    :== root of file name to be read (.dat assumed)
+On Output:
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+;-
+;+
+Kenneth Sembach
+                               IMOPLOT.PRO
+                               Version 5.2
+Created: Unknown
+Last Revision: 05/02/99
+
+Program Description:
+       This procedure overplots a file by calling IMREAD to read it.
+	Nothing fancy!
+
+Restrictions:
+       Too simple to be really useful.
+
+Screen Output: 
+       Graphics
+
+Use:
+       IMOPLOT,root
+
+On Input:
+               root    :== root of file name to be read (.dat assumed)
+On Output:
+	None
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+       IMREAD
+;-
+;+
+Kenneth Sembach
+				IMREAD.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revision:	05/02/99
+
+Program Description:
+	This procedure reads files created by IMWRITE.  If the file to be read
+	was not created by IMWRITE, then the file is assumed to be formatted
+	by HIAVE. 
+
+Restrictions:
+	Files in HIAVE format must have less than 2000 data point pairs.
+
+Screen Output: 
+	Error text 
+
+Use:
+	IMREAD,root,x,y,object,comment,ion,wavc,mapi,order,rflags,updates
+
+On Input:
+		root	:== root of file name to be read (.dat assumed)
+On Output:
+		root	:== "BADFILE" if file is unreadable
+		x	:== x coordinate array
+		y	:== y coordinate array
+		object	:== object comment
+		ion	:== ion comment
+		wavc	:== rest wavelength
+		mapi	:== (Data type:  0 = IUE,  -1 = GHRS,  -5 = CAT/CES
+			     -8 = NRAO 140ft, -9 = KPNO Coude Feed, -7 = STIS)
+		order	:== order number
+		r_flags	:== 3 element array containing the axis flag, smoothing
+			    flag, and tau flag, respectively
+		updates	:== string array containing update comments
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Version 3.0
+	03/21/91  KRS   - Version 4.0, number of parameters reduced by 1,
+			  header comments added. "BADFILE" option added.
+	10/06/92  KRS 	- Version 5.0, runs under Version 2 IDL.  Update
+			  list length now unlimited.  Logical unit used 
+			  to open file in place of unit 31.  Error string
+			  now printed upon error.
+	12/14/95  KRS  	- Added axis keyword to call.
+	05/02/99  KRS	- Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	IMUPDATE	- to revise the update comments
+;-
+;+
+Kenneth Sembach
+                               IMREBIN.PRO
+                               Version 5.2
+Created: Unknown
+Last Revision: 05/02/99
+
+Program Description:
+       This procedure rebins data and associated error bars for use in 
+	IMNORM.
+
+Restrictions:
+       Rebins only by whole integer amounts.
+
+Screen Output: 
+       Text
+
+Use:
+       IMOPLOT,root
+
+On Input:
+		root    :== root of file name to be read (.dat assumed)
+		x       :== x coordinate array
+		y       :== y coordinate array
+		ycon	:== y continuum array
+		lbar	:== lower error bar array if defined
+		ubar	:== upper error bar array if defined
+		coflag  :== continuum definition flag (0=undefined,1=defined)
+		ebflag	:== error bar flag (0=undefined, 1=defined)
+
+On Output:
+		x       :== rebinned x coordinate array
+		y       :== rebinned y coordinate array
+		ycon	:== rebinned y continuum array
+		lbar	:== rebinned lower error bar array if defined
+		ubar	:== rebinned upper error bar array if defined
+		updates :== string array containing update comments
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+       IMUPDATE	- to revise the update comments
+;-
+;+
+Kenneth Sembach
+				IMSAVE.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revision:	05/02/99
+
+Program Description:
+	This procedure saves data files in ASCII format with an IMNORM
+	header.  The file can be read by IMREAD.
+
+Restrictions:
+	All paprameters must be passed for proper execution.
+
+Screen Output:  
+	Text
+
+Use:
+	IMSAVE,root,x,y,object,comment,ion,wavc,mapi,order,rflags,updates
+
+On Input:
+		root	:== root of file name to be written (.dat assumed)
+		x	:== x coordinate array
+		y	:== y coordinate array
+		object	:== object comment
+		ion	:== ion comment
+		wavc	:== rest wavelength
+		mapi    :== (Data type:  0 = IUE,  -1 = GHRS,  -5 = CAT/CES
+			     -8 = NRAO 140ft, -7 = STIS, -9 = Coude Feed)
+		order	:== order number
+		r_flags	:== 3 element array containing the axis flag, smoothing
+			    flag, and tau flag, respectively
+		updates	:== string array containing update comments
+On Output:
+		root:	:== "BADFILE" if file is unreadable
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Version 3.0 - IMWRITE
+	03/21/91  KRS   - Version 4.0, header comments added.
+	10/06/92  KRS	- Version 5.0, runs under Version 2 IDL.  Logical
+			  unit used to open file.  Error string printed 
+			  upon error. Renamed IMSAVE.
+	06/19/97  KRS 	- Version 5.1, parameter default for updates added.
+	05/02/99  KRS	- Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMSMEAR.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revision:	05/02/99
+
+Program Description:
+	This function convolves a spectrum with a gaussian having a FWHM
+	specified by the user.  Updated for use on Sparc.
+
+Screen Output: None
+
+Use:
+	Result = IMSMEAR(x,y,fwhm,[updates])
+
+On Input:
+		x	:== x coordinate array
+		y	:== y coordinate array
+		fwhm	:== fwhm of Gaussian
+		updates	:== update array
+On Output:
+		Result	:== Smoothed version of y
+
+Common Blocks:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Version 3.0
+	03/21/91  KRS   - Version 4.0, update comment parameter added.
+	05/11/93  KRS	- Version 5.0, Changed to function.  Use on Sparc.
+	05/02/99  KRS	- Version 5.2, documentation updated for distribution
+
+External Routines called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMSTAT2.PRO
+				Version 5.2
+Created: Unknown
+Last Revision:	05/02/99
+
+Program Description:
+	This procedure calculates line statistics weighted by the data 
+	values (mean, width, skewness, etc.).  It is called by IMSTAT_PREP.
+
+Restrictions:
+	Higher order results fairly dependent upon cutoff range used in
+	IMSTAT_PREP.
+
+Screen Output: 
+	Text
+
+Use:
+	IMSTAT2,x,y,ycon,y_sig,ycon_sig,m1,m1err,m2,m2err,m3,m3err,m4,m4err
+
+On Input:
+		x       :== wavelength array
+		y       :== intensity array
+		ycon    :== continuum array
+		y_sig   :== statistical errors in y
+		ycon_sig:== continuum fit error array
+
+On Output:
+		m1	:== average velocity
+		m1err	:== error on m1
+		m2	:== width
+		m2err	:== error on m2
+		m3	:== skewness
+		m3err	:== error on m3
+		m4	:== extent (same as m2 with m1=0)
+		m3err	:== error on m4
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	02/27/95  KRS	- Version 5.2, documentation updated for distribution
+
+External Routines called:
+	None
+;-
+;+
+Kenneth Sembach
+                               IMSTAT_PREP.PRO
+                                 Version 5.2
+Created: 09/01/89
+Last Revision: 05/02/99
+
+Program Description:
+       This procedure is a driver for the routine IMSTAT2.PRO.  It determines
+       the integration range and type of noise to propagate through a line 
+       during a line statistics measurement and then displays results of 
+       the calculation.
+
+Restrictions:
+       None  
+
+Screen Output:
+       Text  &  Graphics
+
+Use:
+       IMSTAT_PREP,x,y,ycon,sigma,ycon_sig
+
+On Input:
+               x       :== wavelength array
+               y       :== intensity array
+               ycon    :== continuum array
+               sigma   :== RMS sigma of continuum fit
+               ycon_sig:== continuum fit error array
+
+On Ouptut:
+               None
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+       10/014/92  KRS  - Version 5.0, runs under Version 2 IDL.
+                         Simplified commands.
+       02/25/95   KRS  - End points of integration added to avoid truncation
+                         (ie., extend from xpos1 to xpos2)
+       05/02/99   KRS  - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+       IMSTAT2         - to calculate line statistics
+       XLIMIT          - to determine elements of integration
+;-
+;+
+Kenneth Sembach
+				IMTRIM.PRO
+				Version 5.2
+Created: 09/01/89
+Last Revision:	05/02/99
+
+Program Description:
+	This program trims a spectrum and associated continuum and error bars.
+
+Screen Output:
+	Text & Graphics
+
+Use:
+	IMTRIM,x,y,ycon,lbar,ubar,coflag,ebflag,updates
+
+On Input:
+		x	:== x coordinate array
+		y	:== y coordinate array
+		ycon 	:== continuum coordinate array
+		lbar	:== lower continuum error bar array
+		ubar	:== upper continuum error bar array
+		coflag	:== continuum fitting flag (0=no,1=yes)
+		ebflag 	:== error bar flag (0=no,1=RMS shift,2=Legendre)
+		updates	:== update array
+On Output:
+		x	:== trimmed x coordinate array
+		y	:== trimmed y coordinate array
+		ycon 	:== trimmed continuum coordinate array
+		lbar	:== trimmed lower error bar array
+		ubar    :== trimmed upper error bar array
+		updates	:== updated updates
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Version 3.0
+	03/21/91  KRS   - Version 4.0, no significant revisions.
+	10/09/92  KRS	- Version 5.0, runs under Version 2 IDL.
+       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines called:
+	XLIMIT		- to determine trimming elements
+;-
+;+
+Kenneth Sembach
+				IMUPDATE.PRO
+				Version 5.2
+Created: 10/06/92
+Last Revision: 05/02/99
+
+Program Description:
+	This procedure inserts a comment update into the array updates.
+
+Screen Output:
+	None
+
+Use:
+	IMUPDATE,updates,comment
+
+On Input:
+		updates	:= array containing header updates
+		comment	:= comment to be inserted into array
+
+On Output:
+		updates	:= revised updates array	
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/07/92  KRS	- Version 5.0, 1st version
+	04/07/97  KRS	- Add /create keyword.
+	05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	None
+;-
+;+
+Kenneth Sembach
+				IMYFIT.PRO
+				Version 5.0
+Created: 09/01/89
+Last Revision: 05/02/99
+
+Program Description:
+	This procedure fits a Legendre polynomial continuum to a spectrum
+	and calculates associated errors as outline in Sembach & Savage 
+	1992.
+
+Restrictions:
+       Requires cursor (3 button mouse) input
+
+Screen Output: 
+	Text  &  Graphics
+
+Use:
+	IMYFIT,x,y,xarray,yarray,store,ycon,a,sigma,ycon_sig,ftflag
+
+On Input:
+		x	:== x coordinate array
+		y	:== y coordinate array
+		xarray	:== x defined continuum array
+		yarray  :== y defined continuum array
+		store   :== stored continuum region array (2xn)
+On Output:
+		ycon	:== y calculated continuum array
+		a	:== coefficient array
+		sigma   :== sigma of fit
+		ycon_sig:== error on continuum points 
+		ftflag  :== continuum fitted flag (0=no,2=Legendre polynomial)
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	09/01/89  KRS	- Version 3.0
+	03/21/91  KRS   - Version 4.0, general cleanup.
+	04/23/91  KRS	- Version 4.1, Legendre polynomial implementation
+	10/08/92  KRS	- Version 5.0, runs under Version 2 IDL.
+       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+
+External Routines Called:
+	LEGERR		- to calculate Legenedre polynomial errors
+	LEGFIT		- to calculate Legendre polynomial fit
+	LEGPOLY		- to construct Legendre polynomial fit
+;-
+;+
+Kenneth Sembach
+                               LEGERR.PRO
+
+Created: Unknown
+Last Revised: 
+
+Program Description:
+	This procedure calculates errors for use with LEGFIT.
+
+Restrictions:
+	Errors treated with uniform weighting ala LEGFIT.
+
+Screen Output:
+       None
+
+Use:
+       LEGERR,x,y,a,eps,chi2,error
+
+On Input:
+		x       :== abcissa array
+		y       :== ordinate array
+		a	:== Legendre polynomial coefficient array (from LEGFIT)
+		eps	:== Error matrix (from LEGFIT)
+		chi2	:== Variance returned by LEGFIT (uniform weighting)
+
+On Ouptut:
+               error  :== error array for y
+
+Common Blocks / Structures:
+       None
+
+Latest Update Comments:
+
+External Routines Called:
+       None
+;-
+;+
+Kenneth Sembach
+				LEGFIT.PRO
+
+Created: 04/23/91
+Last Revised: 05/02/99
+
+Program Description:
+	This procedure calculates a Legendre polynomial fit to data.  Derived
+       from procedure similar to that given by Bevington (1969).
+
+Restrictions:
+	None
+
+Screen Output:
+	None
+
+Use:
+	LEGFIT,x,y,minord,maxord,yfit,a,eps,chi2
+	
+On Input:
+		x	:== abscissa array
+		y	:== ordinate array
+		minord	:== minimum order to start fit
+		maxord	:== maximum order to terminate fit
+
+On Output:
+		yfit	:== fitted array (over x)
+		a	:== coefficients of fit
+		eps	:== error matrix
+		chi2	:== chi-squared for fit (by definition = sigma^2 here)
+                           We use uniform weighting = 1 here, and let sigma
+                           be goodness of fit.
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/08/92  KRS	- Now runs under Version 2 IDL.
+	05/02/99  KRS	- Documentation updates
+
+External Routines Called:
+	FTEST		- to check for need for another term in polynomial
+;-
+;+
+Kenneth Sembach
+				LEGPOLY.PRO
+
+Created: 04/23/91
+Last Revised: 10/08/92
+
+Program Description:
+	This function calcuates the Legendre polynomial corresponding
+	to an abcissa vector and a coefficient vector.
+
+Restrictions:
+	None 
+
+Screen Output:
+	None
+
+Use:
+	result = LEGPOLY(x,a)
+	
+On Input:
+		x	:== abcissa array
+		a	:== coefficient array
+
+On Ouptut:
+		result	:== array containing Legendre polynomial construction
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/08/92  KRS	- Updated to run under Version 2 IDL.
+
+External Routines Called:
+	None
+;-
+;+
+Kenneth Sembach
+				XLIMIT.PRO
+				Version 6.0
+Created: 09/01/89
+Last Revision:	02/27/95
+
+Program Description:
+	This procedure finds the end pixels (x1 & x2) of array x between the
+	values xpos1 & xpos2.
+
+Screen Output: None
+
+Use:
+	XLIMIT,x,xpos1,xpos2,x1,x2
+
+On Input:
+		x	:== xarray
+		xpos1	:== left data limit
+		xpos2	:== right data limit
+
+On Output:
+		x1	:== left x pixel
+		x2	:== right x pixel
+
+Common Blocks / Structures:
+	None
+
+Latest Update Comments:
+	10/15/92  KRS	- Version 5.0, IMLIMIT renamed to XLIMIT
+	02/27/95  KRS	- Stupid conditional removed.  No more changing of
+			   xpos1 and xpos2.
+
+External Routines called:
+	None
+;-

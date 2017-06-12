@@ -1,0 +1,24 @@
+http://web.mit.edu/~burles/www/MIKE/mike_install.html
+
+See below for the website for installation directions. Note that I get an error message when I try to do this. 
+
+XIDL package
+Built and distributed by Jason X. Prochaska
+Public tarball version located here: Lick
+If you wish to modify the code yourself, I highly recommend you contact me about accessing the CVS distribution.
+Installing...
+Copy the package into $HOMEIDL_DIR
+Unpack the distribution (unpacks into xidl/) and enter the directory
+prompt> gtar -zxvf xidl.tar.gz
+
+prompt> cd xidl/
+
+Clean the directories
+prompt> bin/evilmake clean
+
+Run the make file (this should detect your operating system):
+prompt> bin/evilmake
+
+Updating
+Simply grab the new tar file, unpack anew and rerun 'bin/evilmake' and 'bin/evilmake clean'
+WARNING: This will overwrite any changes you have made to these codes!!! Use the CVS distribution to avoid this (contact me)

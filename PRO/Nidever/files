@@ -1,0 +1,2 @@
+set `ls | wc`
+echo $2 'files'

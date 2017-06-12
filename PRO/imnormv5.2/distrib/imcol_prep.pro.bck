@@ -1,0 +1,195 @@
+;+
+;Kenneth Sembach
+;                               IMCOL_PREP.PRO
+;                                 Version 5.2
+;
+;Created: Unknown
+;Last Revised: 02/27/95
+;
+;Program Description:
+;       This procedure is a driver for the routine IMCOL.PRO.  It determines
+;       the integration range and type of noise to propagate through a line
+;       during a column density  measurement and then displays results of
+;       the calculation.
+;
+;Restrictions:
+;       None
+;
+;Screen Output:
+;       Text  &  Graphics
+;
+;Use:
+;       IMCOL_PREP,x,y,ycon,sigma,ycon_sig,ebflag,wavc
+;
+;On Input:
+;               x       :== velocity array
+;               y       :== intensity array
+;               ycon    :== continuum array
+;               sigma   :== RMS sigma of continuum fit
+;               ycon_sig:== continuum fit error array
+;		ebflag 	:== error bar flag
+;               wavc    :== laboratory wavelength of line
+;
+;On Ouptut:
+;               None
+;
+;Common Blocks / Structures:
+;       None
+;
+;Latest Update Comments:
+;	01/28/93  KRS  	- Version 5.0, runs under Version 2 IDL.
+;                    	  Simplified commands.
+;	02/25/95  KRS  	- End points of integration added to avoid truncation
+;                      	  (ie., extend from xpos1 to xpos2)
+;	05/02/99  KRS  	- Version 5.2, documentation updated for distribution
+;                      	- Limit checking added
+;
+;External Routines Called:
+;       IMCOL           - to calculate column density and errors
+;       XLIMIT          - to determine elements of integration
+;------------------------------------------------------------------------------
+PRO IMCOL_PREP,x,y,ycon,sigma,ycon_sig,ebflag,wavc
+	common SHARE, ncol,ncole1,ncole2,ncolez, w,w_es,w_ec,w_et,w_ez,va,vaerr,ba,baerr,m3,m3err,v1,v2,col3sig
+
+        IF N_PARAMS() EQ 0 THEN BEGIN MAN,'imcol_prep' & RETURN & ENDIF
+;
+;Error control
+;
+	ON_IOERROR,ESCAPE
+;
+;Find the appropriate fvalue from a standard line list.
+;
+	fval = FIND_FVAL(wavc)
+LOOP:
+;
+;Plot the column density versus velocity.
+;
+	ycol = FLTARR(N_ELEMENTS(y))
+	FOR i=0,N_ELEMENTS(y)-1 DO BEGIN
+		IF (y(i) GT 0) AND (ycon(i) GT 0) THEN BEGIN
+			ycol(i) = ALOG(ycon(i)/y(i)) / (wavc*fval*2.654e-15)
+		ENDIF
+	ENDFOR
+	PLOT,x,ycol
+;
+;Overplot zero line.
+;
+	OPLOT,!x.crange,[0,0],LINESTYLE=2
+;
+;Print wavelength, f-value, and error type to screen for a user check.
+;
+	PRINT,'IMCOL_PREP(v5.2)::  Wavelength = ',STRING(wavc,'(f8.3)')
+	PRINT,'IMCOL_PREP(v5.2)::  f-value = ',STRING(fval,'(f7.5)')
+	IF ebflag LE 1 THEN BEGIN
+		PRINT,'IMCOL_PREP(v5.2)::  RMS shifting errors'
+	ENDIF ELSE IF ebflag EQ 2 THEN BEGIN
+		PRINT,'IMCOL_PREP(v5.2)::  Legendre fit errors'
+	ENDIF ELSE BEGIN
+		PRINT,'IMCOL_PREP(v5.2)::  Unknown error type'
+	ENDELSE
+;
+;Type of input.
+;
+	PRINT,'IMCOL_PREP(v5.2)::  (c)ursor   (k)eyboard
+	choice1 = GET_KBRD(1)
+;
+;Get limits of integration regardless of which mode is used.
+;
+	IF choice1 EQ 'c' THEN BEGIN
+		PRINT,'IMCOL_PREP(v5.2)::  Mark (C1)   Clear (C2)   Quit(c3)
+
+          CURSOR,xpos1,ypos1,/DOWN  &  IF !err EQ 4 THEN RETURN
+          IF !err EQ 2 THEN BEGIN
+                PLOT,x,y  &  GOTO,LOOP
+          ENDIF
+          xpos1 = xpos1 > MIN(x)  &  !c = 0
+          PRINT,'IMCOL_PREP(v5.2)::  Left limit:  ',xpos1,IMAXIS(xpos1,wavc,+1)
+          CURSOR,xpos2,ypos2,/DOWN  &  IF !err EQ 4 THEN RETURN
+          IF !err EQ 2 THEN BEGIN
+                PLOT,x,y  &  GOTO,LOOP
+          ENDIF
+          xpos2 = xpos2 < MAX(x)  &  !c = 0
+          PRINT,'IMCOL_PREP(v5.2)::  Right limit: ',xpos2,IMAXIS(xpos2,wavc,+1)
+	ENDIF ELSE BEGIN
+                READ,'IMCOL_PREP(v5.2)::  Enter left limit (v):  ',xpos1
+                READ,'IMCOL_PREP(v5.2)::  Enter right limit (v): ',xpos2
+	ENDELSE
+
+        IF xpos1 GT xpos2 THEN BEGIN
+                PRINT,'IMCOL_PREP(v5.2)::  '$
+                        +'Limits will be reversed for integration'
+                xtmp = xpos1 & xpos1 = xpos2 & xpos2 = xtmp
+        ENDIF
+;
+;Compute which range of elements should be included in integration and fill
+;in line.  XLIMIT will find points in between limits, but be sure to set
+;endpoints of integration equal to the limits.
+;
+        XLIMIT,x,xpos1,xpos2,x1,x2
+        IF ABS(x1-x2) LE 1 THEN BEGIN
+                PRINT,'IMCOL_PREP(v5.2)::  '$
+                        +'Insufficient spectral range specified.'
+                PRINT,'IMCOL_PREP(v5.2)::  Please re-enter limits.'
+                GOTO,LOOP
+        ENDIF
+        xwork = [xpos1,x(x1:x2),xpos2]
+        ywork = [INTERPOL(y,x,xpos1),y(x1:x2),INTERPOL(y,x,xpos2)]
+        yconwork = [INTERPOL(ycon,x,xpos1),ycon(x1:x2),INTERPOL(ycon,x,xpos2)]
+        ycolwork = [INTERPOL(ycol,x,xpos1),ycol(x1:x2),INTERPOL(ycol,x,xpos2)]
+        ycon_sig_work = [INTERPOL(ycon_sig,x,xpos1),ycon_sig(x1:x2)]
+        ycon_sig_work = [ycon_sig_work,INTERPOL(ycon_sig,x,xpos2)]
+;
+;Ask about what kind of statistics should be used (poisson or fixed pattern)
+;to describe the noise characteristics of the data.
+;
+        PRINT,'IMCOL_PREP(v5.2)::  Noise:  (p)oisson   (f)ixed pattern'
+        kind = GET_KBRD(1)
+        IF kind EQ 'f' THEN BEGIN
+                PRINT,'IMCOL_PREP(v5.2)::  Fixed pattern noise assumed'
+                y_sig_work = sigma + FLTARR(N_ELEMENTS(ywork))
+        ENDIF ELSE BEGIN
+                PRINT,'IMCOL_PREP(v5.2)::  Poisson noise assumed'
+                y_sig_work = sigma * SQRT((ywork>0.0001)/yconwork)
+        ENDELSE
+;
+;Calculate the column density and error by calling IMCOL.
+;
+	IMCOL,xwork,ywork,yconwork,y_sig_work,ycon_sig_work,wavc,fval,col,$
+		y_err,ycon_err,zero_err
+	tot_err = SQRT(y_err^2 + ycon_err^2)
+	IF col LE 0.0 THEN col=1.0
+;
+;FIll in the integrated area for the viewer to see.
+;
+        POLYFILL,[xwork,REVERSE(xwork)],[ycolwork,REVERSE(yconwork)]
+;
+;Print information dump.
+;
+        PRINT,'IMCOL_PREP(v5.2)::  Information Dump Follows'
+        PRINT,'--------------------------------------------'
+	PRINT,'N (-1 sig)  = ',col-tot_err,STRING(ALOG10(col-tot_err),'(F9.3)')
+	PRINT,'N (best)    = ',col,STRING(ALOG10(col),'(F9.3)')
+	PRINT,'N (+1 sig)  = ',col+tot_err,STRING(ALOG10(col+tot_err),'(F9.3)')
+	PRINT,'2% zero err = ',zero_err,$
+		STRING(ALOG10(col+zero_err)-ALOG10(col),'(F9.3)')
+        PRINT,'--------------------------------------------'
+        PRINT,'IMCOL_PREP(v5.2)::  End Information Dump'
+        PRINT,'IMCOL_PREP(v5.2)::  (f)-value change  (q)uit'
+	choice = GET_KBRD(1)
+	IF choice EQ 'f' THEN BEGIN
+		READ,'IMCOL_PREP(v5.2)::  Enter new f-value: ',fval
+		GOTO,LOOP
+	ENDIF
+	ncol   = alog10(col)
+	ncole1 = ALOG10(col+tot_err) - ALOG10(col)
+	ncole2 = -ALOG10(col-tot_err) + ALOG10(col)
+	ncolez = ALOG10(col+zero_err)-ALOG10(col)
+	RETURN
+;------------------------------------------------------------------------------
+ESCAPE:
+        PRINT,'IMCOL_PREP(v5.2):: '+!err_string
+        RETURN  &  END
+
+
+
+

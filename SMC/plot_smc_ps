@@ -1,0 +1,58 @@
+@colplstart
+device, file='smc_ha.ps'
+
+@kat_color_dark
+
+
+whammap, smc[nostars], 0, 0, iha, /use, $
+  /lin, zmin=.01, zmax=.6, xmargin=[6,0], ymargin=[4,0], $
+  scale=1.5, beamrad=0.25, cbottom=1, missing=255, background ="white", smgrid=.25;, smooth=1
+    linelon=[305.071, 290.717]
+  linelat=[-47.4677,-36.3667]
+    oplot, [-299.183,-193.169],[-38.9616,-44.6147]
+ @kat_color_dark
+;colorbar, position=[0.19, 0.05, 0.90, 0.10], range=[.01, .6], bottom=1, ncolors=252, $
+;  title = 'v!dLSR!n [km s!u-1!n]'
+
+  MinData=min(smc_hi.data) & MaxData=max(smc_hi.data)
+  cgColorbar, Divisions=4, Minor=5, Format='(F0.2)',range=[.01, .6], /fit, /vertical, title = 'Intensity [Rayleighs]'
+;These contours are for the HA  
+;x = -reduceto180(smc[nostars].glon)
+;y = smc[nostars].glat
+;z = iha
+;contour, z, x, y, /irr, /overplot, levels=[.03, .16, .45, 1], $
+;  c_thick = [1,5,7,12],C_LABELS = [1, 1, 1, 1], c_color = color(254), c_linestyle = [0]
+
+x = -reduceto180(smc_hi.glon)
+y = smc_hi.glat
+z = nhi
+
+contour, z, x, y, /irr, /overplot, levels=[.5, 1, 5, 10], $
+  c_thick = [1,5,7,12], C_LABELS = [1, 1, 1, 1], c_color = color(254), c_linestyle = [0]
+
+
+device, /close
+device, file='smc_hi.ps'
+
+bright_hi = where(nhi ge 0.5) ;; x 10^20 cm^-2
+whammap, smc_hi, 0, 0, nhi, /use, $
+  /lin, zmin=.01, zmax=1, xmargin=[6,0], ymargin=[4,0], $
+  scale=1.5, beamrad=0.25, cbottom=1, missing=255, background ="white";, 'smooth=1'
+
+;colorbar, position=[0.19, 0.05, 0.90, 0.10], range=[+120, +180], bottom=1, ncolors=252, $
+;  title = 'v!dLSR!n [km s!u-1!n]'
+
+cgColorbar, Divisions=4, Minor=5, Format='(F0.2)',range=[.01, 1], /fit, /vertical, title = 'Column Density [10!u19!n cm!u-2!n]'
+
+x = -reduceto180(smc_hi.glon)
+y = smc_hi.glat
+z = nhi
+
+contour, z, x, y, /irr, /overplot, levels=[.5, 1, 5, 10], $
+  c_thick = [1,5,7,12], C_LABELS = [1, 1, 1, 1], c_color = color(254), c_linestyle = [0]
+    oplot, [-305.071, -290.717],[-47.4677,-36.3667]
+    oplot, [-299.183,-293.169],[-38.9616,-46.67]
+device, /close
+set_plot, 'x' 
+
+

@@ -1,0 +1,39 @@
+Compilation --------
+
+    'ant' to build
+
+Building Stubs ---------
+
+to build the tablejobs stub...
+
+java org.apache.axis.wsdl.WSDL2Java http://localhost/casjobs/tablejobs.asmx?wsdl
+
+to build the casjobs.asmx stub...
+
+votable messes this all up.  you need to edit the wsdl.
+first download and save the wsdl (casjobs.asmx?wsdl)
+then delete all references to VOTable, including method calls with votable in their name.
+then build the stubs from the modified wsdl.
+
+the stub url fields also need to be changed from private to public.
+one is here... TableJobsLocator.TableJobsSoap_address
+the other is here...  CasJobsLocator.CasJobsSoap_address
+
+copy the stubs over to the appropriate ./src directory, then delete build, then rebuild.
+
+
+Building the Jar ---
+
+    'ant dist' will build a jar and zip up the src directory. 
+
+    one of the libraries has a partially signed certificate that causes problems in the jar.
+    you need to edit the jar to fix this.
+    open it up in a package viewer (winzip/winrar, etc)
+
+    delete all
+
+    META-INF\SUN_MICR*
+
+    save (repackage)
+    
+

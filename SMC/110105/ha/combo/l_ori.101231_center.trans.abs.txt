@@ -1,0 +1,4 @@
+Calib_Src  Date   Tune   Ln(I_int) sigma  Slope   sigma  Ln(I_0)  Slope   sigma   N   Airmass   PAMON  PBMON  Tune  IP                   Del_Ln(I) 
+                                                                                     min   max                Diff                        Applied  
+--------- ------ ------- ------- ------- ------- ------- ------- ------- ------- -- ----- ----- ------ ------ ----- -------------------- ----------
+    l_ori 101231  center 28.6237 0.02495 ******* 0.01590  8.1850 -1.5003 0.00105  6  1.36  1.64 1060.1 1489.4 429.3  CTIO - [O I] Center  0.8286040

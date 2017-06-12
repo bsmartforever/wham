@@ -1,0 +1,13 @@
+# KPNO - Blue
+
+# This is an instrument profile file. Line that start with hashes
+# are comments. Comments may be interspersed among the data below. The
+# first line of the file (sans comment character) will be treated as a
+# label to identify this profile (e.g. in a chooser widget). The
+# following lines should contain three columns: mean, FWHM, and height.
+# The total integrated area of the components in this profile must
+# equal 1.0.
+
+   0.2443000000   11.5911000000    0.0363100000
+   0.7369000000   20.5727000000    0.0165700000
+  -0.9813000000   39.4470000000    0.0045060000

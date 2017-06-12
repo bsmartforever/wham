@@ -1,0 +1,4 @@
+Calib_Src  Date   Tune   Ln(I_int) sigma  Slope   sigma   N   Airmass
+                                                     min   max
+--------- ------ ------- ------- ------- ------- ------- -- ----- -----
+    l_ori 101231 _center  8.2930 0.21034 -0.1145 0.13900  4  1.33  1.53

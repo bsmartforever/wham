@@ -1,0 +1,43 @@
+################################################################################
+#+
+#  Module:	$KSSDIR/qlook2/Makefile
+#
+#  Revisions:   
+#
+#  Author:	Jason Weiss / Michael McElwain
+#
+#  Date:	2005/03/23
+#
+#  Description:	Makefile for Quicklook2
+#-
+################################################################################
+
+#  Include files.
+
+INCLUDE	= 
+
+#  C source and object files.
+CFLAGS  = 
+
+SOURCE	= 
+OBJECT	= 
+
+DIRS	= 
+
+#  Files to make are ...
+FILES	= 
+
+#  Files to release are ...
+RELFILES = 
+RELPRO   = osiris_im_cfg.pro \
+	   osiris_online_cfg.pro 
+
+PROSUB = qlook2/configs
+
+#override SYSNAM = kss/qlook2/
+#override VERNUM = 1.4
+
+#  Include general make rules (use /etc if no environment variable).
+
+include $(KROOT)/etc/config.mk
+

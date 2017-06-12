@@ -1,0 +1,6 @@
+;
+;Sample .idlstartup file
+; 
+     rootdir = '/home/sundoggie/sembach/'
+     DEFSYSV,'!KRS_LINELIST',rootdir+'imnormv5.2/lists/uv_linelist.dat',0
+     !help_path= rootdir+'imnormv5.2/help:'+!help_path

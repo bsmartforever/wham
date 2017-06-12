@@ -1,0 +1,3 @@
+cd build
+java edu.jhu.Cas.CasJobsCL.CasJobsCL $*
+

@@ -1,0 +1,3 @@
+device,/close
+$lpr idl.ps
+if (getenv('DISPLAY') ne '') then set_plot,'X' else set_plot,'TEK'

@@ -1,0 +1,7 @@
+; Structure used to hold molecule spectral line information.
+; This is filled by moleculeread and stored in !g.molecules for use by molecule.
+molstruct = {molecule_struct, $
+             type:' ', $ holds "U" for unidentified transition
+             freq:0.D, $ ; the rest frequency
+             formula: 'HCCCCCCCCCCCN' $ the chemical formula
+            }

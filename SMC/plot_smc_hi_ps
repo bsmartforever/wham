@@ -1,0 +1,31 @@
+@colplstart
+device, file='smc_hi.ps'
+@smc_mcels
+restore, '/d/wham/pro/data/sao.dat'
+  findstars, smc, sao6, closemap, closestars, nclose, closedist
+
+  bad_pointings = list()
+  foreach e, closemap do bad_pointings.Add, e, /extract
+  bad_pointings = bad_pointings.ToArray()
+  bad_pointings = bad_pointings[uniq(bad_pointings, sort(bad_pointings))]
+
+  nostars = list(indgen(n_elements(smc)), /extract)
+  nostars.Remove, bad_pointings
+  nostars = nostars.ToArray()
+
+loadct,3
+whammap, smc_hi[nostars], 0, 0, $
+  /lin, smooth=1, smgrid=0.1, tv=tv, mimage=mimage, $
+  zmin=0.01, zmax=0.6, xmargin=[10,0], ymargin=[4,0], scale=1.5
+
+
+loadct,13
+
+x = -reduceto180(smc_hi.glon)
+y = smc_hi.glat
+z = nhi
+contour, z, x, y, /irr, /overplot, levels=[.5, 1, 5, 20], $
+  c_thick = [1,2,3,4], c_color = color(140), c_linestyle = [0]
+
+device, /close
+set_plot,'x'

@@ -1,0 +1,41 @@
+@colplstart
+device, file='smc_v_ha.ps'
+
+@mycmap
+;loadct,33
+
+bright = where(imap ge 0.23)
+
+whammap, smc[nostars[bright]], 0, 0, mean_v[bright], /use, $
+  /lin, zmin=+120, zmax=+190, xmargin=[6,0], ymargin=[4,0], $
+  scale=1.5, beamrad=0.25, cbottom=1,latcenter=-44, loncenter=302;, limits=[285, 320, -50, -33],/radec,/backwards,
+
+  ;print, mean(mean_v[bright])
+  
+colorbar, position=[0.19, 0.05, 0.90, 0.10], range=[+120, +190], bottom=1, ncolors=252, $
+  title = 'v!dLSR!n [km s!u-1!n]'
+  
+x = -reduceto180(smc_hi.glon)
+y = smc_hi.glat
+z = nhi
+contour, z, x, y, /irr, /overplot, levels=[.5, 1, 5, 20], $
+  c_thick = [1,2,3,4], c_color = color(0), c_linestyle = [0]
+
+device, /close
+device, file='smc_v_hi.ps'
+
+bright_hi = where(nhi ge 0.5) ;; x 10^20 cm^-2
+whammap, smc_hi[bright_hi], 0, 0, vhi[bright_hi], /use, $
+  /lin, zmin=+120, zmax=+190, /radec,/backwards, xmargin=[6,0], ymargin=[4,0], $
+  scale=1.5, beamrad=0.25, cbottom=1,latcenter=-44, loncenter=302;, limits=[285, 320, -50, -33]
+
+  ;print, mean(vhi[bright_hi])
+
+colorbar, position=[0.19, 0.00, 0.90, 0.05], range=[+120, +190], bottom=1, ncolors=252, $
+  title = 'v!dLSR!n [km s!u-1!n]'
+
+contour, z, x, y, /irr, /overplot, levels=[.5, 1, 5, 20], $
+  c_thick = [1,2,3,4], c_color = color(0), c_linestyle = [0]
+
+device, /close
+set_plot, 'x' 

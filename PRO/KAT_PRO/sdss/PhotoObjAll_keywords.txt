@@ -1,0 +1,478 @@
+PhotoObjAll
+Contains ~585,634,220 rows (~1,818,044,192 kB)
+
+Notes
+
+ConeSearchClient	 	 1/1/2001 12:00:00 AM
+PhotoObjAll
+
+Contains a record describing the attributes of each photometric object
+The table has views:
+
+PhotoObj: all primary and secondary objects; essentially this is the view you should use unless you want a specific type of object.
+PhotoPrimary: all photo objects that are primary (the best version of the object).
+Star: Primary objects that are classified as stars.
+Galaxy: Primary objects that are classified as galaxies.
+Sky:Primary objects which are sky samples.
+Unknown:Primary objects which are no0ne of the above
+PhotoSecondary: all photo objects that are secondary (secondary detections)
+PhotoFamily: all photo objects which are neither primary nor secondary (blended)
+The table has indices that cover the popular columns.
+
+name	unit	ucd	enum	description
+objID		ID_MAIN		Unique SDSS identifier composed from [skyVersion,rerun,run,camcol,field,obj].
+skyVersion		CODE_MISC		0 = OPDB target, 1 = OPDB best
+run		OBS_RUN		Run number
+rerun		CODE_MISC		Rerun number
+camcol		INST_ID		Camera column
+field		ID_FIELD		Field number
+obj		ID_NUMBER		The object id within a field. Usually changes between reruns of the same field.
+mode		CLASS_OBJECT		1: primary, 2: secondary, 3: family object, 4: outside chunk boundary.
+nChild		NUMBER		Number of children if this is a composite object that has been deblended. BRIGHT (in a flags sense) objects also have nchild == 1, the non-BRIGHT sibling.
+type		CLASS_OBJECT	PhotoType	Morphological type classification of the object.
+clean		CODE_MISC		Clean photometry flag for point sources (1=clean, 0=unclean).
+probPSF		STAT_PROBABILITY		Probability that the object is a star. Currently 0 if type == 3 (galaxy), 1 if type == 6 (star).
+insideMask		CODE_MISC	InsideMask	Flag to indicate whether object is inside a mask and why
+flags		CODE_MISC	PhotoFlags	Photo Object Attribute Flags
+rowc	pix	POS_CCD_Y		Row center position (r' coordinates)
+rowcErr	pix	POS_CCD_Y ERROR		Row center position error (r' coordinates)
+colc	pix	POS_CCD_X		Column center position (r' coordinates)
+colcErr	pix	POS_CCD_X ERROR		Column center position error (r' coordinates)
+rowv	deg/day	POS_ANG_VEL		Row-component of object's velocity.
+rowvErr	deg/day	POS_ANG_VEL ERROR		Row-component of object's velocity error
+colv	deg/day	POS_ANG_VEL		Column-component of object's velocity.
+colvErr	deg/day	POS_ANG_VEL ERROR		Column-component of object's velocity error
+rowc_u	pix	POS_CCD_Y		Row center
+rowc_g	pix	POS_CCD_Y		Row center
+rowc_r	pix	POS_CCD_Y		Row center
+rowc_i	pix	POS_CCD_Y		Row center
+rowc_z	pix	POS_CCD_Y		Row center
+rowcErr_u	pix	POS_CCD_Y ERROR		Row center error
+rowcErr_g	pix	POS_CCD_Y ERROR		Row center error
+rowcErr_r	pix	POS_CCD_Y ERROR		Row center error
+rowcErr_i	pix	POS_CCD_Y ERROR		Row center error
+rowcErr_z	pix	POS_CCD_Y ERROR		Row center error
+colc_u	pix	POS_CCD_X		Column center
+colc_g	pix	POS_CCD_X		Column center
+colc_r	pix	POS_CCD_X		Column center
+colc_i	pix	POS_CCD_X		Column center
+colc_z	pix	POS_CCD_X		Column center
+colcErr_u	pix	POS_CCD_X ERROR		Column center error
+colcErr_g	pix	POS_CCD_X ERROR		Column center error
+colcErr_r	pix	POS_CCD_X ERROR		Column center error
+colcErr_i	pix	POS_CCD_X ERROR		Column center error
+colcErr_z	pix	POS_CCD_X ERROR		Column center error
+sky_u	maggies/arcsec^2	INST_SKY_LEVEL		Sky flux at the center of object (allowing for siblings if blended).
+sky_g	maggies/arcsec^2	INST_SKY_LEVEL		Sky flux at the center of object (allowing for siblings if blended).
+sky_r	maggies/arcsec^2	INST_SKY_LEVEL		Sky flux at the center of object (allowing for siblings if blended).
+sky_i	maggies/arcsec^2	INST_SKY_LEVEL		Sky flux at the center of object (allowing for siblings if blended).
+sky_z	maggies/arcsec^2	INST_SKY_LEVEL		Sky flux at the center of object (allowing for siblings if blended).
+skyErr_u	maggies/arcsec^2	INST_SKY_LEVEL ERROR		Sky flux error
+skyErr_g	maggies/arcsec^2	INST_SKY_LEVEL ERROR		Sky flux error
+skyErr_r	maggies/arcsec^2	INST_SKY_LEVEL ERROR		Sky flux error
+skyErr_i	maggies/arcsec^2	INST_SKY_LEVEL ERROR		Sky flux error
+skyErr_z	maggies/arcsec^2	INST_SKY_LEVEL ERROR		Sky flux error
+psfMag_u	mag	PHOT_SDSS_U		PSF flux
+psfMag_g	mag	PHOT_SDSS_G		PSF flux
+psfMag_r	mag	PHOT_SDSS_R		PSF flux
+psfMag_i	mag	PHOT_SDSS_I		PSF flux
+psfMag_z	mag	PHOT_SDSS_Z		PSF flux
+psfMagErr_u	mag	PHOT_SDSS_U ERROR		PSF flux error
+psfMagErr_g	mag	PHOT_SDSS_G ERROR		PSF flux error
+psfMagErr_r	mag	PHOT_SDSS_R ERROR		PSF flux error
+psfMagErr_i	mag	PHOT_SDSS_I ERROR		PSF flux error
+psfMagErr_z	mag	PHOT_SDSS_Z ERROR		PSF flux error
+fiberMag_u	mag	PHOT_SDSS_U		Flux in 3 arcsec diameter fiber radius
+fiberMag_g	mag	PHOT_SDSS_G		Flux in 3 arcsec diameter fiber radius
+fiberMag_r	mag	PHOT_SDSS_R		Flux in 3 arcsec diameter fiber radius
+fiberMag_i	mag	PHOT_SDSS_I		Flux in 3 arcsec diameter fiber radius
+fiberMag_z	mag	PHOT_SDSS_Z		Flux in 3 arcsec diameter fiber radius
+fiberMagErr_u	mag	PHOT_SDSS_U ERROR		Flux in 3 arcsec diameter fiber radius error
+fiberMagErr_g	mag	PHOT_SDSS_G ERROR		Flux in 3 arcsec diameter fiber radius error
+fiberMagErr_r	mag	PHOT_SDSS_R ERROR		Flux in 3 arcsec diameter fiber radius error
+fiberMagErr_i	mag	PHOT_SDSS_I ERROR		Flux in 3 arcsec diameter fiber radius error
+fiberMagErr_z	mag	PHOT_SDSS_Z ERROR		Flux in 3 arcsec diameter fiber radius error
+petroMag_u	mag	PHOT_SDSS_U		Petrosian flux
+petroMag_g	mag	PHOT_SDSS_G		Petrosian flux
+petroMag_r	mag	PHOT_SDSS_R		Petrosian flux
+petroMag_i	mag	PHOT_SDSS_I		Petrosian flux
+petroMag_z	mag	PHOT_SDSS_Z		Petrosian flux
+petroMagErr_u	mag	PHOT_SDSS_U ERROR		Petrosian flux error
+petroMagErr_g	mag	PHOT_SDSS_G ERROR		Petrosian flux error
+petroMagErr_r	mag	PHOT_SDSS_R ERROR		Petrosian flux error
+petroMagErr_i	mag	PHOT_SDSS_I ERROR		Petrosian flux error
+petroMagErr_z	mag	PHOT_SDSS_Z ERROR		Petrosian flux error
+petroRad_u	arcsec	EXTENSION_RAD		Petrosian radius
+petroRad_g	arcsec	EXTENSION_RAD		Petrosian radius
+petroRad_r	arcsec	EXTENSION_RAD		Petrosian radius
+petroRad_i	arcsec	EXTENSION_RAD		Petrosian radius
+petroRad_z	arcsec	EXTENSION_RAD		Petrosian radius
+petroRadErr_u	arcsec	EXTENSION_RAD ERROR		Petrosian radius error
+petroRadErr_g	arcsec	EXTENSION_RAD ERROR		Petrosian radius error
+petroRadErr_r	arcsec	EXTENSION_RAD ERROR		Petrosian radius error
+petroRadErr_i	arcsec	EXTENSION_RAD ERROR		Petrosian radius error
+petroRadErr_z	arcsec	EXTENSION_RAD ERROR		Petrosian radius error
+petroR50_u	arcsec	EXTENSION_RAD		Radius containing 50% of Petrosian flux
+petroR50_g	arcsec	EXTENSION_RAD		Radius containing 50% of Petrosian flux
+petroR50_r	arcsec	EXTENSION_RAD		Radius containing 50% of Petrosian flux
+petroR50_i	arcsec	EXTENSION_RAD		Radius containing 50% of Petrosian flux
+petroR50_z	arcsec	EXTENSION_RAD		Radius containing 50% of Petrosian flux
+petroR50Err_u	arcsec	EXTENSION_RAD ERROR		Error in radius with 50% of Petrosian flux error
+petroR50Err_g	arcsec	EXTENSION_RAD ERROR		Error in radius with 50% of Petrosian flux error
+petroR50Err_r	arcsec	EXTENSION_RAD ERROR		Error in radius with 50% of Petrosian flux error
+petroR50Err_i	arcsec	EXTENSION_RAD ERROR		Error in radius with 50% of Petrosian flux error
+petroR50Err_z	arcsec	EXTENSION_RAD ERROR		Error in radius with 50% of Petrosian flux error
+petroR90_u	arcsec	EXTENSION_RAD		Radius containing 90% of Petrosian flux
+petroR90_g	arcsec	EXTENSION_RAD		Radius containing 90% of Petrosian flux
+petroR90_r	arcsec	EXTENSION_RAD		Radius containing 90% of Petrosian flux
+petroR90_i	arcsec	EXTENSION_RAD		Radius containing 90% of Petrosian flux
+petroR90_z	arcsec	EXTENSION_RAD		Radius containing 90% of Petrosian flux
+petroR90Err_u	arcsec	EXTENSION_RAD ERROR		Error in radius with 90% of Petrosian flux error
+petroR90Err_g	arcsec	EXTENSION_RAD ERROR		Error in radius with 90% of Petrosian flux error
+petroR90Err_r	arcsec	EXTENSION_RAD ERROR		Error in radius with 90% of Petrosian flux error
+petroR90Err_i	arcsec	EXTENSION_RAD ERROR		Error in radius with 90% of Petrosian flux error
+petroR90Err_z	arcsec	EXTENSION_RAD ERROR		Error in radius with 90% of Petrosian flux error
+q_u		FIT_PARAM		Stokes Q parameter
+q_g		FIT_PARAM		Stokes Q parameter
+q_r		FIT_PARAM		Stokes Q parameter
+q_i		FIT_PARAM		Stokes Q parameter
+q_z		FIT_PARAM		Stokes Q parameter
+qErr_u		FIT_PARAM ERROR		Stokes Q parameter error
+qErr_g		FIT_PARAM ERROR		Stokes Q parameter error
+qErr_r		FIT_PARAM ERROR		Stokes Q parameter error
+qErr_i		FIT_PARAM ERROR		Stokes Q parameter error
+qErr_z		FIT_PARAM ERROR		Stokes Q parameter error
+u_u		FIT_PARAM		Stokes U parameter
+u_g		FIT_PARAM		Stokes U parameter
+u_r		FIT_PARAM		Stokes U parameter
+u_i		FIT_PARAM		Stokes U parameter
+u_z		FIT_PARAM		Stokes U parameter
+uErr_u		FIT_PARAM ERROR		Stokes U parameter error
+uErr_g		FIT_PARAM ERROR		Stokes U parameter error
+uErr_r		FIT_PARAM ERROR		Stokes U parameter error
+uErr_i		FIT_PARAM ERROR		Stokes U parameter error
+uErr_z		FIT_PARAM ERROR		Stokes U parameter error
+mE1_u		FIT_PARAM		Adaptive E1 shape measure
+mE1_g		FIT_PARAM		Adaptive E1 shape measure
+mE1_r		FIT_PARAM		Adaptive E1 shape measure
+mE1_i		FIT_PARAM		Adaptive E1 shape measure
+mE1_z		FIT_PARAM		Adaptive E1 shape measure
+mE2_u		FIT_PARAM		Adaptive E2 shape measure
+mE2_g		FIT_PARAM		Adaptive E2 shape measure
+mE2_r		FIT_PARAM		Adaptive E2 shape measure
+mE2_i		FIT_PARAM		Adaptive E2 shape measure
+mE2_z		FIT_PARAM		Adaptive E2 shape measure
+mE1E1Err_u		FIT_PARAM ERROR		Covariance in E1/E1 shape measure
+mE1E1Err_g		FIT_PARAM ERROR		Covariance in E1/E1 shape measure
+mE1E1Err_r		FIT_PARAM ERROR		Covariance in E1/E1 shape measure
+mE1E1Err_i		FIT_PARAM ERROR		Covariance in E1/E1 shape measure
+mE1E1Err_z		FIT_PARAM ERROR		Covariance in E1/E1 shape measure
+mE1E2Err_u		FIT_PARAM ERROR		Covariance in E1/E2 shape measure
+mE1E2Err_g		FIT_PARAM ERROR		Covariance in E1/E2 shape measure
+mE1E2Err_r		FIT_PARAM ERROR		Covariance in E1/E2 shape measure
+mE1E2Err_i		FIT_PARAM ERROR		Covariance in E1/E2 shape measure
+mE1E2Err_z		FIT_PARAM ERROR		Covariance in E1/E2 shape measure
+mE2E2Err_u		FIT_PARAM ERROR		Covariance in E2/E2 shape measure
+mE2E2Err_g		FIT_PARAM ERROR		Covariance in E2/E2 shape measure
+mE2E2Err_r		FIT_PARAM ERROR		Covariance in E2/E2 shape measure
+mE2E2Err_i		FIT_PARAM ERROR		Covariance in E2/E2 shape measure
+mE2E2Err_z		FIT_PARAM ERROR		Covariance in E2/E2 shape measure
+mRrCc_u		FIT_PARAM		Adaptive ( + )
+mRrCc_g		FIT_PARAM		Adaptive ( + )
+mRrCc_r		FIT_PARAM		Adaptive ( + )
+mRrCc_i		FIT_PARAM		Adaptive ( + )
+mRrCc_z		FIT_PARAM		Adaptive ( + )
+mRrCcErr_u		FIT_PARAM ERROR		Error in adaptive ( + )
+mRrCcErr_g		FIT_PARAM ERROR		Error in adaptive ( + )
+mRrCcErr_r		FIT_PARAM ERROR		Error in adaptive ( + )
+mRrCcErr_i		FIT_PARAM ERROR		Error in adaptive ( + )
+mRrCcErr_z		FIT_PARAM ERROR		Error in adaptive ( + )
+mCr4_u		FIT_PARAM		Adaptive fourth moment of object
+mCr4_g		FIT_PARAM		Adaptive fourth moment of object
+mCr4_r		FIT_PARAM		Adaptive fourth moment of object
+mCr4_i		FIT_PARAM		Adaptive fourth moment of object
+mCr4_z		FIT_PARAM		Adaptive fourth moment of object
+mE1PSF_u		FIT_PARAM		Adaptive E1 for PSF
+mE1PSF_g		FIT_PARAM		Adaptive E1 for PSF
+mE1PSF_r		FIT_PARAM		Adaptive E1 for PSF
+mE1PSF_i		FIT_PARAM		Adaptive E1 for PSF
+mE1PSF_z		FIT_PARAM		Adaptive E1 for PSF
+mE2PSF_u		FIT_PARAM		Adaptive E2 for PSF
+mE2PSF_g		FIT_PARAM		Adaptive E2 for PSF
+mE2PSF_r		FIT_PARAM		Adaptive E2 for PSF
+mE2PSF_i		FIT_PARAM		Adaptive E2 for PSF
+mE2PSF_z		FIT_PARAM		Adaptive E2 for PSF
+mRrCcPSF_u		FIT_PARAM		Adaptive ( + ) for PSF
+mRrCcPSF_g		FIT_PARAM		Adaptive ( + ) for PSF
+mRrCcPSF_r		FIT_PARAM		Adaptive ( + ) for PSF
+mRrCcPSF_i		FIT_PARAM		Adaptive ( + ) for PSF
+mRrCcPSF_z		FIT_PARAM		Adaptive ( + ) for PSF
+mCr4PSF_u		FIT_PARAM		Adaptive fourth moment for PSF
+mCr4PSF_g		FIT_PARAM		Adaptive fourth moment for PSF
+mCr4PSF_r		FIT_PARAM		Adaptive fourth moment for PSF
+mCr4PSF_i		FIT_PARAM		Adaptive fourth moment for PSF
+mCr4PSF_z		FIT_PARAM		Adaptive fourth moment for PSF
+isoRowc_u	pix	FIT_PARAM		Isophotal row centroid
+isoRowc_g	pix	FIT_PARAM		Isophotal row centroid
+isoRowc_r	pix	FIT_PARAM		Isophotal row centroid
+isoRowc_i	pix	FIT_PARAM		Isophotal row centroid
+isoRowc_z	pix	FIT_PARAM		Isophotal row centroid
+isoRowcErr_u	pix	FIT_PARAM		Isophotal row centroid error. PLACEHOLDER, set to -9999 or -1000
+isoRowcErr_g	pix	FIT_PARAM		Isophotal row centroid error. PLACEHOLDER, set to -9999 or -1000
+isoRowcErr_r	pix	FIT_PARAM		Isophotal row centroid error. PLACEHOLDER, set to -9999 or -1000
+isoRowcErr_i	pix	FIT_PARAM		Isophotal row centroid error. PLACEHOLDER, set to -9999 or -1000
+isoRowcErr_z	pix	FIT_PARAM		Isophotal row centroid error. PLACEHOLDER, set to -9999 or -1000
+isoRowcGrad_u	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in row centroid with isophote
+isoRowcGrad_g	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in row centroid with isophote
+isoRowcGrad_r	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in row centroid with isophote
+isoRowcGrad_i	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in row centroid with isophote
+isoRowcGrad_z	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in row centroid with isophote
+isoColc_u	pix	FIT_PARAM		Isophotal column centroid
+isoColc_g	pix	FIT_PARAM		Isophotal column centroid
+isoColc_r	pix	FIT_PARAM		Isophotal column centroid
+isoColc_i	pix	FIT_PARAM		Isophotal column centroid
+isoColc_z	pix	FIT_PARAM		Isophotal column centroid
+isoColcErr_u	pix	FIT_PARAM		Isophotal column centroid error. PLACEHOLDER, set to -9999 or -1000
+isoColcErr_g	pix	FIT_PARAM		Isophotal column centroid error. PLACEHOLDER, set to -9999 or -1000
+isoColcErr_r	pix	FIT_PARAM		Isophotal column centroid error. PLACEHOLDER, set to -9999 or -1000
+isoColcErr_i	pix	FIT_PARAM		Isophotal column centroid error. PLACEHOLDER, set to -9999 or -1000
+isoColcErr_z	pix	FIT_PARAM		Isophotal column centroid error. PLACEHOLDER, set to -9999 or -1000
+isoColcGrad_u	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in column centroid with isophote
+isoColcGrad_g	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in column centroid with isophote
+isoColcGrad_r	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in column centroid with isophote
+isoColcGrad_i	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in column centroid with isophote
+isoColcGrad_z	pix/(mag/arcsec^2)	FIT_PARAM		Gradient in column centroid with isophote
+isoA_u	pix	EXTENSION_RAD		Isophotal major axis
+isoA_g	pix	EXTENSION_RAD		Isophotal major axis
+isoA_r	pix	EXTENSION_RAD		Isophotal major axis
+isoA_i	pix	EXTENSION_RAD		Isophotal major axis
+isoA_z	pix	EXTENSION_RAD		Isophotal major axis
+isoAErr_u	pix	EXTENSION_RAD ERROR		Isophotal major axis error. PLACEHOLDER, set to -9999 or -1000
+isoAErr_g	pix	EXTENSION_RAD ERROR		Isophotal major axis error. PLACEHOLDER, set to -9999 or -1000
+isoAErr_r	pix	EXTENSION_RAD ERROR		Isophotal major axis error. PLACEHOLDER, set to -9999 or -1000
+isoAErr_i	pix	EXTENSION_RAD ERROR		Isophotal major axis error. PLACEHOLDER, set to -9999 or -1000
+isoAErr_z	pix	EXTENSION_RAD ERROR		Isophotal major axis error. PLACEHOLDER, set to -9999 or -1000
+isoB_u	pix	EXTENSION_SMIN		Isophotal minor axis
+isoB_g	pix	EXTENSION_SMIN		Isophotal minor axis
+isoB_r	pix	EXTENSION_SMIN		Isophotal minor axis
+isoB_i	pix	EXTENSION_SMIN		Isophotal minor axis
+isoB_z	pix	EXTENSION_SMIN		Isophotal minor axis
+isoBErr_u	pix	EXTENSION_SMIN ERROR		Isophotal minor axis error. PLACEHOLDER, set to -9999 or -1000
+isoBErr_g	pix	EXTENSION_SMIN ERROR		Isophotal minor axis error. PLACEHOLDER, set to -9999 or -1000
+isoBErr_r	pix	EXTENSION_SMIN ERROR		Isophotal minor axis error. PLACEHOLDER, set to -9999 or -1000
+isoBErr_i	pix	EXTENSION_SMIN ERROR		Isophotal minor axis error. PLACEHOLDER, set to -9999 or -1000
+isoBErr_z	pix	EXTENSION_SMIN ERROR		Isophotal minor axis error. PLACEHOLDER, set to -9999 or -1000
+isoAGrad_u	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in major axis at the isophote
+isoAGrad_g	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in major axis at the isophote
+isoAGrad_r	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in major axis at the isophote
+isoAGrad_i	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in major axis at the isophote
+isoAGrad_z	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in major axis at the isophote
+isoBGrad_u	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in minor axis at the isophote
+isoBGrad_g	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in minor axis at the isophote
+isoBGrad_r	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in minor axis at the isophote
+isoBGrad_i	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in minor axis at the isophote
+isoBGrad_z	arcsec/(mag/arcsec^2)	FIT_PARAM		Gradient in minor axis at the isophote
+isoPhi_u	deg	FIT_PARAM		Isophotal position angle (+N thru E)
+isoPhi_g	deg	FIT_PARAM		Isophotal position angle (+N thru E)
+isoPhi_r	deg	FIT_PARAM		Isophotal position angle (+N thru E)
+isoPhi_i	deg	FIT_PARAM		Isophotal position angle (+N thru E)
+isoPhi_z	deg	FIT_PARAM		Isophotal position angle (+N thru E)
+isoPhiErr_u	deg	FIT_PARAM		Isophotal position angle error. PLACEHOLDER, set to -9999 or -1000
+isoPhiErr_g	deg	FIT_PARAM		Isophotal position angle error. PLACEHOLDER, set to -9999 or -1000
+isoPhiErr_r	deg	FIT_PARAM		Isophotal position angle error. PLACEHOLDER, set to -9999 or -1000
+isoPhiErr_i	deg	FIT_PARAM		Isophotal position angle error. PLACEHOLDER, set to -9999 or -1000
+isoPhiErr_z	deg	FIT_PARAM		Isophotal position angle error. PLACEHOLDER, set to -9999 or -1000
+isoPhiGrad_u	deg/(mag/arcsec^2)	FIT_PARAM		Gradient in positional angle with isophote
+isoPhiGrad_g	deg/(mag/arcsec^2)	FIT_PARAM		Gradient in positional angle with isophote
+isoPhiGrad_r	deg/(mag/arcsec^2)	FIT_PARAM		Gradient in positional angle with isophote
+isoPhiGrad_i	deg/(mag/arcsec^2)	FIT_PARAM		Gradient in positional angle with isophote
+isoPhiGrad_z	deg/(mag/arcsec^2)	FIT_PARAM		Gradient in positional angle with isophote
+deVRad_u	arcsec	EXTENSION_RAD FIT_PARAM		DeVaucouleurs fit scale radius
+deVRad_g	arcsec	EXTENSION_RAD FIT_PARAM		DeVaucouleurs fit scale radius
+deVRad_r	arcsec	EXTENSION_RAD FIT_PARAM		DeVaucouleurs fit scale radius
+deVRad_i	arcsec	EXTENSION_RAD FIT_PARAM		DeVaucouleurs fit scale radius
+deVRad_z	arcsec	EXTENSION_RAD FIT_PARAM		DeVaucouleurs fit scale radius
+deVRadErr_u	arcsec	EXTENSION_RAD ERROR		DeVaucouleurs fit scale radius error
+deVRadErr_g	arcsec	EXTENSION_RAD ERROR		DeVaucouleurs fit scale radius error
+deVRadErr_r	arcsec	EXTENSION_RAD ERROR		DeVaucouleurs fit scale radius error
+deVRadErr_i	arcsec	EXTENSION_RAD ERROR		DeVaucouleurs fit scale radius error
+deVRadErr_z	arcsec	EXTENSION_RAD ERROR		DeVaucouleurs fit scale radius error
+deVAB_u		FIT_PARAM		DeVaucouleurs fit a/b
+deVAB_g		FIT_PARAM		DeVaucouleurs fit a/b
+deVAB_r		FIT_PARAM		DeVaucouleurs fit a/b
+deVAB_i		FIT_PARAM		DeVaucouleurs fit a/b
+deVAB_z		FIT_PARAM		DeVaucouleurs fit a/b
+deVABErr_u		FIT_PARAM ERROR		DeVaucouleurs fit a/b error
+deVABErr_g		FIT_PARAM ERROR		DeVaucouleurs fit a/b error
+deVABErr_r		FIT_PARAM ERROR		DeVaucouleurs fit a/b error
+deVABErr_i		FIT_PARAM ERROR		DeVaucouleurs fit a/b error
+deVABErr_z		FIT_PARAM ERROR		DeVaucouleurs fit a/b error
+deVPhi_u	deg	FIT_PARAM POS_ANG_GENERAL		DeVaucouleurs fit position angle (+N thru E)
+deVPhi_g	deg	FIT_PARAM POS_ANG_GENERAL		DeVaucouleurs fit position angle (+N thru E)
+deVPhi_r	deg	FIT_PARAM POS_ANG_GENERAL		DeVaucouleurs fit position angle (+N thru E)
+deVPhi_i	deg	FIT_PARAM POS_ANG_GENERAL		DeVaucouleurs fit position angle (+N thru E)
+deVPhi_z	deg	FIT_PARAM POS_ANG_GENERAL		DeVaucouleurs fit position angle (+N thru E)
+deVPhiErr_u	deg	FIT_PARAM POS_ANG_GENERAL ERROR		DeVaucouleurs fit position angle error. PLACEHOLDER, set to -9999 or -1000
+deVPhiErr_g	deg	FIT_PARAM POS_ANG_GENERAL ERROR		DeVaucouleurs fit position angle error. PLACEHOLDER, set to -9999 or -1000
+deVPhiErr_r	deg	FIT_PARAM POS_ANG_GENERAL ERROR		DeVaucouleurs fit position angle error. PLACEHOLDER, set to -9999 or -1000
+deVPhiErr_i	deg	FIT_PARAM POS_ANG_GENERAL ERROR		DeVaucouleurs fit position angle error. PLACEHOLDER, set to -9999 or -1000
+deVPhiErr_z	deg	FIT_PARAM POS_ANG_GENERAL ERROR		DeVaucouleurs fit position angle error. PLACEHOLDER, set to -9999 or -1000
+deVMag_u	mag	PHOT_SDSS_U FIT_PARAM		DeVaucouleurs magnitude fit
+deVMag_g	mag	PHOT_SDSS_G FIT_PARAM		DeVaucouleurs magnitude fit
+deVMag_r	mag	PHOT_SDSS_R FIT_PARAM		DeVaucouleurs magnitude fit
+deVMag_i	mag	PHOT_SDSS_I FIT_PARAM		DeVaucouleurs magnitude fit
+deVMag_z	mag	PHOT_SDSS_Z FIT_PARAM		DeVaucouleurs magnitude fit
+deVMagErr_u	mag	PHOT_SDSS_U ERROR FIT_PARAM		DeVaucouleurs magnitude fit error
+deVMagErr_g	mag	PHOT_SDSS_G ERROR FIT_PARAM		DeVaucouleurs magnitude fit error
+deVMagErr_r	mag	PHOT_SDSS_R ERROR FIT_PARAM		DeVaucouleurs magnitude fit error
+deVMagErr_i	mag	PHOT_SDSS_I ERROR FIT_PARAM		DeVaucouleurs magnitude fit error
+deVMagErr_z	mag	PHOT_SDSS_Z ERROR FIT_PARAM		DeVaucouleurs magnitude fit error
+expRad_u	arcsec	EXTENSION_RAD FIT_PARAM		Exponetial fit scale radius
+expRad_g	arcsec	EXTENSION_RAD FIT_PARAM		Exponetial fit scale radius
+expRad_r	arcsec	EXTENSION_RAD FIT_PARAM		Exponetial fit scale radius
+expRad_i	arcsec	EXTENSION_RAD FIT_PARAM		Exponetial fit scale radius
+expRad_z	arcsec	EXTENSION_RAD FIT_PARAM		Exponetial fit scale radius
+expRadErr_u	arcsec	EXTENSION_RAD ERROR		Exponetial fit scale radius error
+expRadErr_g	arcsec	EXTENSION_RAD ERROR		Exponetial fit scale radius error
+expRadErr_r	arcsec	EXTENSION_RAD ERROR		Exponetial fit scale radius error
+expRadErr_i	arcsec	EXTENSION_RAD ERROR		Exponetial fit scale radius error
+expRadErr_z	arcsec	EXTENSION_RAD ERROR		Exponetial fit scale radius error
+expAB_u		FIT_PARAM		Exponential fit a/b
+expAB_g		FIT_PARAM		Exponential fit a/b
+expAB_r		FIT_PARAM		Exponential fit a/b
+expAB_i		FIT_PARAM		Exponential fit a/b
+expAB_z		FIT_PARAM		Exponential fit a/b
+expABErr_u		FIT_PARAM		Exponential fit a/b
+expABErr_g		FIT_PARAM		Exponential fit a/b
+expABErr_r		FIT_PARAM		Exponential fit a/b
+expABErr_i		FIT_PARAM		Exponential fit a/b
+expABErr_z		FIT_PARAM		Exponential fit a/b
+expPhi_u	deg	FIT_PARAM POS_ANG_GENERAL		Exponential fit position angle (+N thru E)
+expPhi_g	deg	FIT_PARAM POS_ANG_GENERAL		Exponential fit position angle (+N thru E)
+expPhi_r	deg	FIT_PARAM POS_ANG_GENERAL		Exponential fit position angle (+N thru E)
+expPhi_i	deg	FIT_PARAM POS_ANG_GENERAL		Exponential fit position angle (+N thru E)
+expPhi_z	deg	FIT_PARAM POS_ANG_GENERAL		Exponential fit position angle (+N thru E)
+expPhiErr_u	deg	FIT_PARAM POS_ANG_GENERAL ERROR		Exponential fit position angle error. PLACEHOLDER, set to -9999 or -1000
+expPhiErr_g	deg	FIT_PARAM POS_ANG_GENERAL ERROR		Exponential fit position angle error. PLACEHOLDER, set to -9999 or -1000
+expPhiErr_r	deg	FIT_PARAM POS_ANG_GENERAL ERROR		Exponential fit position angle error. PLACEHOLDER, set to -9999 or -1000
+expPhiErr_i	deg	FIT_PARAM POS_ANG_GENERAL ERROR		Exponential fit position angle error. PLACEHOLDER, set to -9999 or -1000
+expPhiErr_z	deg	FIT_PARAM POS_ANG_GENERAL ERROR		Exponential fit position angle error. PLACEHOLDER, set to -9999 or -1000
+expMag_u	mag	PHOT_SDSS_U		Exponential fit
+expMag_g	mag	PHOT_SDSS_G		Exponential fit
+expMag_r	mag	PHOT_SDSS_R		Exponential fit
+expMag_i	mag	PHOT_SDSS_I		Exponential fit
+expMag_z	mag	PHOT_SDSS_Z		Exponential fit
+expMagErr_u	mag	PHOT_SDSS_U ERROR		Exponential fit error
+expMagErr_g	mag	PHOT_SDSS_G ERROR		Exponential fit error
+expMagErr_r	mag	PHOT_SDSS_R ERROR		Exponential fit error
+expMagErr_i	mag	PHOT_SDSS_I ERROR		Exponential fit error
+expMagErr_z	mag	PHOT_SDSS_Z ERROR		Exponential fit error
+modelMag_u	mag	PHOT_SDSS_U FIT_PARAM		better of DeV/Exp magnitude fit
+modelMag_g	mag	PHOT_SDSS_G FIT_PARAM		better of DeV/Exp magnitude fit
+modelMag_r	mag	PHOT_SDSS_R FIT_PARAM		better of DeV/Exp magnitude fit
+modelMag_i	mag	PHOT_SDSS_I FIT_PARAM		better of DeV/Exp magnitude fit
+modelMag_z	mag	PHOT_SDSS_Z FIT_PARAM		better of DeV/Exp magnitude fit
+modelMagErr_u	mag	PHOT_SDSS_U ERROR		better of DeV/Exp magnitude fit error
+modelMagErr_g	mag	PHOT_SDSS_G ERROR		better of DeV/Exp magnitude fit error
+modelMagErr_r	mag	PHOT_SDSS_R ERROR		better of DeV/Exp magnitude fit error
+modelMagErr_i	mag	PHOT_SDSS_I ERROR		better of DeV/Exp magnitude fit error
+modelMagErr_z	mag	PHOT_SDSS_Z ERROR		better of DeV/Exp magnitude fit error
+texture_u		FIT_PARAM		Texture parameter
+texture_g		FIT_PARAM		Texture parameter
+texture_r		FIT_PARAM		Texture parameter
+texture_i		FIT_PARAM		Texture parameter
+texture_z		FIT_PARAM		Texture parameter
+lnLStar_u		FIT_GOODNESS		Star ln(likelihood)
+lnLStar_g		FIT_GOODNESS		Star ln(likelihood)
+lnLStar_r		FIT_GOODNESS		Star ln(likelihood)
+lnLStar_i		FIT_GOODNESS		Star ln(likelihood)
+lnLStar_z		FIT_GOODNESS		Star ln(likelihood)
+lnLExp_u		FIT_GOODNESS		Exponential disk fit ln(likelihood)
+lnLExp_g		FIT_GOODNESS		Exponential disk fit ln(likelihood)
+lnLExp_r		FIT_GOODNESS		Exponential disk fit ln(likelihood)
+lnLExp_i		FIT_GOODNESS		Exponential disk fit ln(likelihood)
+lnLExp_z		FIT_GOODNESS		Exponential disk fit ln(likelihood)
+lnLDeV_u		FIT_GOODNESS		DeVaucouleurs fit ln(likelihood)
+lnLDeV_g		FIT_GOODNESS		DeVaucouleurs fit ln(likelihood)
+lnLDeV_r		FIT_GOODNESS		DeVaucouleurs fit ln(likelihood)
+lnLDeV_i		FIT_GOODNESS		DeVaucouleurs fit ln(likelihood)
+lnLDeV_z		FIT_GOODNESS		DeVaucouleurs fit ln(likelihood)
+fracDeV_u		PHOT_FLUX_RATIO		Weight of deV component in best composite model
+fracDeV_g		PHOT_FLUX_RATIO		Weight of deV component in best composite model
+fracDeV_r		PHOT_FLUX_RATIO		Weight of deV component in best composite model
+fracDeV_i		PHOT_FLUX_RATIO		Weight of deV component in best composite model
+fracDeV_z		PHOT_FLUX_RATIO		Weight of deV component in best composite model
+flags_u		CODE_MISC	PhotoFlags	Object detection flags per band
+flags_g		CODE_MISC	PhotoFlags	Object detection flags per band
+flags_r		CODE_MISC	PhotoFlags	Object detection flags per band
+flags_i		CODE_MISC	PhotoFlags	Object detection flags per band
+flags_z		CODE_MISC	PhotoFlags	Object detection flags per band
+type_u		CLASS_OBJECT	PhotoType	Object type classification per band
+type_g		CLASS_OBJECT	PhotoType	Object type classification per band
+type_r		CLASS_OBJECT	PhotoType	Object type classification per band
+type_i		CLASS_OBJECT	PhotoType	Object type classification per band
+type_z		CLASS_OBJECT	PhotoType	Object type classification per band
+probPSF_u		STAT_PROBABILITY		Probablity object is a star in each filter.
+probPSF_g		STAT_PROBABILITY		Probablity object is a star in each filter.
+probPSF_r		STAT_PROBABILITY		Probablity object is a star in each filter.
+probPSF_i		STAT_PROBABILITY		Probablity object is a star in each filter.
+probPSF_z		STAT_PROBABILITY		Probablity object is a star in each filter.
+status		CODE_MISC	PhotoStatus	Status of the object in the survey
+ra	deg	POS_EQ_RA_MAIN		J2000 right ascension (r')
+dec	deg	POS_EQ_DEC_MAIN		J2000 declination (r')
+cx		POS_EQ_CART_X		unit vector for ra+dec
+cy		POS_EQ_CART_Y		unit vector for ra+dec
+cz		POS_EQ_CART_Z		unit vector for ra+dec
+raErr	arcsec	POS_EQ_RA_ERR		Error in RA
+decErr	arcsec	POS_EQ_DEC_ERR		Error in dec
+raDecCorr		CODE_MISC		RA/dec correlation
+b	deg	POS_GAL_LON		Galactic latitude
+l	deg	POS_GAL_LAT		Galactic longitude
+offsetRa_u	arcsec	POS_OFFSET		filter position ra minus final ra (* cos(dec))
+offsetRa_g	arcsec	POS_OFFSET		filter position ra minus final ra (* cos(dec))
+offsetRa_r	arcsec	POS_OFFSET		filter position ra minus final ra (* cos(dec))
+offsetRa_i	arcsec	POS_OFFSET		filter position ra minus final ra (* cos(dec))
+offsetRa_z	arcsec	POS_OFFSET		filter position ra minus final ra (* cos(dec))
+offsetDec_u	arcsec	POS_OFFSET		filter position dec minus final dec
+offsetDec_g	arcsec	POS_OFFSET		filter position dec minus final dec
+offsetDec_r	arcsec	POS_OFFSET		filter position dec minus final dec
+offsetDec_i	arcsec	POS_OFFSET		filter position dec minus final dec
+offsetDec_z	arcsec	POS_OFFSET		filter position dec minus final dec
+primTarget		CODE_MISC	PrimTarget	Bit mask of primary target categories the object was selected in.
+secTarget		CODE_MISC	SecTarget	Bit mask of secondary target categories the object was selected in.
+seguePrimTarget		CODE_MISC		Bit mask of SEGUE primary target categories the object was selected in.
+segueSecTarget		CODE_MISC		Bit mask of SEGUE secondary target categories the object was selected in.
+extinction_u	mag	PHOT_EXTINCTION_GAL		Extinction in each filter
+extinction_g	mag	PHOT_EXTINCTION_GAL		Extinction in each filter
+extinction_r	mag	PHOT_EXTINCTION_GAL		Extinction in each filter
+extinction_i	mag	PHOT_EXTINCTION_GAL		Extinction in each filter
+extinction_z	mag	PHOT_EXTINCTION_GAL		Extinction in each filter
+priority		CODE_MISC		Priority bits
+rho	mag	EXTENSION_RAD		Log size for surface brightness: 5xlog(Petro radius in i band)
+nProf_u		NUMBER		Number of Profile Bins
+nProf_g		NUMBER		Number of Profile Bins
+nProf_r		NUMBER		Number of Profile Bins
+nProf_i		NUMBER		Number of Profile Bins
+nProf_z		NUMBER		Number of Profile Bins
+loadVersion		ID_VERSION		Load Version
+htmID		CODE_HTM		20-deep hierarchical trangular mesh ID of this object
+fieldID		ID_FIELD		Link to the field this object is in
+parentID		ID_PARENT		Pointer to parent (if object deblended) or BRIGHT detection (if object has one), else 0
+specObjID		ID_CATALOG		Pointer to the spectrum of object, if exists, else 0
+u	mag	PHOT_SDSS_U FIT_PARAM		Shorthand alias for modelMag
+g	mag	PHOT_SDSS_G FIT_PARAM		Shorthand alias for modelMag
+r	mag	PHOT_SDSS_R FIT_PARAM		Shorthand alias for modelMag
+i	mag	PHOT_SDSS_I FIT_PARAM		Shorthand alias for modelMag
+z	mag	PHOT_SDSS_Z FIT_PARAM		Shorthand alias for modelMag
+err_u	mag	PHOT_SDSS_U ERROR		Error in modelMag alias
+err_g	mag	PHOT_SDSS_G ERROR		Error in modelMag alias
+err_r	mag	PHOT_SDSS_R ERROR		Error in modelMag alias
+err_i	mag	PHOT_SDSS_I ERROR		Error in modelMag alias
+err_z	mag	PHOT_SDSS_Z ERROR		Error in modelMag alias
+dered_u	mag	PHOT_SDSS_U		Simplified mag, corrected for extinction: modelMag-extinction
+dered_g	mag	PHOT_SDSS_G		Simplified mag, corrected for extinction: modelMag-extinction
+dered_r	mag	PHOT_SDSS_R		Simplified mag, corrected for extinction: modelMag-extinction
+dered_i	mag	PHOT_SDSS_I		Simplified mag, corrected for extinction: modelMag-extinction
+dered_z	mag	PHOT_SDSS_Z		Simplified mag, corrected for extinction: modelMag-extinction
+New Note
+

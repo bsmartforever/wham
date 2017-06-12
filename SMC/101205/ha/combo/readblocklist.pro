@@ -1,0 +1,83 @@
+PRO create_avg_block, avgblocks, map, ext = ext
+
+  ;; Note: map already has the first block loaded. We try to modify
+  ;; its data with the averaged spectra.
+
+  print, "  Going to try and average: " + strjoin(avgblocks, ',')
+
+  dups = replicate({name: ' ', $
+                    map: map}, $
+                   N_ELEMENTS(avgblocks))
+
+  dups[0].name = avgblocks[0]
+  dups[0].map = map
+
+  FOR i = 1, N_ELEMENTS(avgblocks)-1 DO BEGIN 
+
+    ;; Load the duplicate blocks in. They all have to be the same size
+    ;; for now. Unfinished, partial blocks aren't supported right now. 
+    print, "Reading Block:" + avgblocks[i]
+    readblock, avgblocks[i], amap, /ext, /quiet, ftsext = ext
+    IF N_ELEMENTS(amap) NE N_ELEMENTS(map) THEN BEGIN 
+      message, '  WARNING: ' + avgblocks[i] + ' is not the same length as ' $
+               + avgblocks[0] + $
+               '. Nobody has made me smart enough to handle that (yet). Blocks will not be averaged.', $
+               /info
+      return    ;; and map is unchanged
+    ENDIF ELSE BEGIN 
+      dups[i].name = avgblocks[i]
+      dups[i].map = amap
+    ENDELSE 
+  ENDFOR 
+
+  ;; Now do the averaging. Right now we only change the name and the
+  ;; vectors in map. Not sure what to do about all the other stuff...
+  FOR i = 0, N_ELEMENTS(map)-1 DO BEGIN 
+    map[i].name = file_basename(map[i].name) + ' (AVG: ' $
+                  + strjoin(avgblocks, ',') + ')'
+    avg_pointing = sparith(dups.map[i], /average)
+    
+    IF N_ELEMENTS(avg_pointing.vel) NE N_ELEMENTS(map[i].vel) THEN $
+      message, string(N_ELEMENTS(avg_pointing.vel), N_ELEMENTS(map[i].vel), $
+        format = '("Averaged pointings (", I4, ") are not the same size as originals (", I4, "); red edge will be clipped.")'), /info
+    
+    limit = n_elements(map[i].vel) - 1
+    
+    map[i].vel = avg_pointing.vel[0:limit]
+    map[i].data = avg_pointing.data[0:limit]
+    map[i].var = avg_pointing.var[0:limit]
+  ENDFOR 
+  
+END  
+
+function readblocklist, list, ext = ext
+
+  if n_elements(ext) eq 0 then ext = 'ATMSUB'
+
+  openr, unit, list, /get_lun
+  line = ''
+
+  while not eof(unit) do begin 
+    readf, unit, line
+    line = strtrim(line, 2)
+    if strpos(line, "#") ne 0 then $
+      blocks = n_elements(blocks) EQ 0 ? [line] : [blocks, line]
+  endwhile
+
+  i = 0
+  REPEAT BEGIN 
+    print, "Reading Block:" + blocks[i]
+    readblock, blocks[i], nmap, /ext, /quiet, ftsext = ext
+    
+    avgblocks = [blocks[i]]
+    WHILE ++i LT N_ELEMENTS(blocks) && strmid(blocks[i], 0, 1) EQ '+' DO $
+      avgblocks = [avgblocks, strmid(blocks[i], 1)]
+    IF N_ELEMENTS(avgblocks) GT 1 THEN create_avg_block, avgblocks, nmap, $
+      ext = ext
+
+    bmap = N_ELEMENTS(bmap) EQ 0 ? nmap : [bmap, nmap]
+  ENDREP UNTIL i GE N_ELEMENTS(blocks) 
+
+  return, bmap
+
+end 

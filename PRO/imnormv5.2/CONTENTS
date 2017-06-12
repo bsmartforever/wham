@@ -1,0 +1,68 @@
+
+
+IMNORM (v5.2) distribution contents
+K. Sembach, May 2, 1999
+
+./distrib
+	find_fval.pro
+	ftest.pro
+	imattr.pro
+	imatts.pro
+ 	imaxis.pro
+	imblem.pro
+	imcol.pro
+	imcol_prep.pro
+	imcont.pro
+	imcurs.pro
+	imebar.pro
+	imeqw.pro
+	imeqw_prep.pro
+	imexpnd.pro
+	imgaus.pro
+	imhelp.pro
+	imjournal.pro
+	immath.pro
+	imnorm.pro
+	imoplot.pro
+	imread.pro
+	imrebin.pro
+	imsave.pro
+	imsmear.pro
+	imstat2.pro
+	imstat_prep.pro
+	imtrim.pro
+	imupdate.pro
+	legerr.pro
+	legfit.pro
+	legpoly.pro
+	xlimit.pro
+
+./help
+	imnormv5.2.help		- for use with MAN procedure
+
+./lists
+	uv_linelist.dat		- contains f-values and wavelengths of lines
+
+./sample
+	hd74455_1304370.att   	- sample IMNORM attribute file
+	hd74455_1304370.dat	- sample IMNORM data file
+	idlstartup		- sample .idlstartup file
+
+./support
+
+	avg.pro
+	filepath.pro
+	gettok.pro
+	man.pro
+	mpbasic.pro
+
+IDL Library Functions/Procedures (expected to be within IDL distribution)
+
+	curvefit.pro
+	gaussfit.pro
+	gaussfucnt		- contained in gaussfit.pro
+	interpol.pro
+	poly.pro
+	poly_area.pro
+	poly_fit.pro
+	reverse.pro

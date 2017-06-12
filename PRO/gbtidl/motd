@@ -1,0 +1,28 @@
+;+
+; The message of the day.  Executed right at the end of startup.
+;-
+
+; For the release, comment out these lines.
+; print
+; print,"This is the current development version of GBTIDL."
+; print
+; print,"It is updated automatically each night with the most recent changes"
+; print,"made by the development team.  Although we try not to break things,"
+; print,"we make no guarantees that this version will work on any given day."
+; print
+
+print,"--------------------------------------------------------------------"
+print,"                     Welcome to GBTIDL v2.8"
+print
+print,"    For news, documentation, enhancement requests, bug tracking,"
+print,"               discussion, and contributions, visit:"
+print
+print,"                   http://gbtidl.nrao.edu"
+print
+print,"    For help with a GBTIDL routine from the command line, use"
+print,"             the procedure 'usage'.  For example:"
+print
+print,"   usage,'show'           ; gives the syntax of the procedure 'show'"
+print,"   usage,'show',/verbose  ; gives more information on 'show'"
+print,"--------------------------------------------------------------------"
+print

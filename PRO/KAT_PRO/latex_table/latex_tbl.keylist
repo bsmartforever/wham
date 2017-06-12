@@ -1,0 +1,11 @@
+SOURCENAME %s   
+RA               %10.5f   
+DEC             %10.5f   
+NH              %10.2f   
+NH_ERRL      %10.2f   err_l 
+NH_ERRU      %10.2f   err_u 
+KT              %10.2f   
+KT_ERRL      %10.2f   err_l 
+KT_ERRU      %10.2f   err_u 
+DUM            %10.2e   
+DUM_ERR     %10.2e   err 

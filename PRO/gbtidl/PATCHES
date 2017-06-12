@@ -1,0 +1,60 @@
+
+11-23-2005 (RG):
+In contrib: abbrev.pro, avkanods.pro, chebfit_v2.pro, gbt_tsys.pro, 
+            getcalval_arr.pro, getkanod.pro, getps_v2.pro,
+            gmeasure.pro, pltg.pro, radium.pro, sdd_define.pro,
+            syms.pro, th_rms.pro, uni2sdfits.pro
+Improved documentation somewhat for contributed code (better use
+of idldoc tags so that usage should work, slightly better formatting
+in some cases, etc).
+
+12-02-2005 (RG):
+toolbox/accumulate.pro
+tests/toolbox_unit_tests.pro
+Fixed bug in handling of vector weight argument (it was completely broken,
+scalar weights were unaffected).
+Added accumulate and related unit tests.
+
+12-02-2005 (PM):
+toolbox/io/io_sdfits__define.pro
+Included checks so that if we're only, we can't recreate index file.
+
+12-02-2005 (PM):
+toolbox/io/io_sdfits_line__define.pro
+moved the setting of the online flag to BEFORE the call to add_file
+
+12-02-2005 (RG):
+toolbox/io/io_sdfits_line__define.pro
+toolbox/io/line_index__define.pro
+tests/io_unit_tests.pro
+test/guide_unit_tests.pro
+frequency resolution must always be >= 0
+
+12-02-2005 (RG):
+toolbox/io/io_sdfits_writer__define
+pad CTYPE4='STOKES' keyword value out to 8 characters 'STOKES  '
+
+12-02-2005 (PM)
+tests/io_unit_tests.pro
+new unit tests for making sure that old version numbers cause index file to
+be recreated and that discrepancies between sdfits and index files causes
+index file to be recreated
+
+12-07-2005 (RG):
+guide/gconvol.pro
+Cleaned up one keyword tag for better usage formatting.
+
+12-08-2005 (JB and RG):
+In guide: getbs.pro, getfs.pro, getnod.pro, getps.pro, getsigref.pro,
+          gettp.pro
+tests/guide_unit_tests.pro
+Corrected error in Tsys calculation.
+
+12-07-2005 (RG):
+run_makedocs: copy using colossus as remote machine and do not use the
+pmargani account.
+
+12-08-2005 (RG):
+In contrib: gbt_tsys.pro, th_rms.pro
+Further clean up of documentation.
+

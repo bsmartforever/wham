@@ -1,0 +1,275 @@
+;+
+;Kenneth Sembach, Nicolas Lehner
+;				IMREAD.PRO
+;				Version 6.0
+;Created: 09/01/89
+;
+;Program Description:
+;	This procedure reads files created by IMWRITE.  If the file to be read
+;	was not created by IMWRITE, then the file is assumed to be formatted
+;	by HIAVE. 
+;
+;Restrictions:
+;	Files in HIAVE format must have less than 2000 data point pairs.
+;
+;Screen Output: 
+;	Error text 
+;
+;Use:
+;	IMREAD,root,x,y,object,comment,ion,wavc,mapi,order,rflags,updates
+;
+;On Input:
+;		root	:== root of file name to be read (.dat assumed)
+;On Output:
+;		root	:== "BADFILE" if file is unreadable
+;		x	:== x coordinate array
+;		y	:== y coordinate array
+;		object	:== object comment
+;		ion	:== ion comment
+;		wavc	:== rest wavelength
+;		mapi	:== (Data type:  0 = IUE,  -1 = GHRS,  -5 = CAT/CES
+;			     -8 = NRAO 140ft, -9 = KPNO Coude Feed, -7 = STIS)
+;		order	:== order number
+;		r_flags	:== 3 element array containing the axis flag, smoothing
+;			    flag, and tau flag, respectively
+;		updates	:== string array containing update comments
+;
+;Common Blocks / Structures:
+;	None
+;
+;Latest Update Comments:
+; 04/06/13  NL - Version 6.0 - removed the wait! 
+; 09/01/89  KRS - Version 3.0
+;	03/21/91  KRS   - Version 4.0, number of parameters reduced by 1,
+;			  header comments added. "BADFILE" option added.
+;	10/06/92  KRS 	- Version 5.0, runs under Version 2 IDL.  Update
+;			  list length now unlimited.  Logical unit used 
+;			  to open file in place of unit 31.  Error string
+;			  now printed upon error.
+;	12/14/95  KRS  	- Added axis keyword to call.
+;	05/02/99  KRS	- Version 5.2, documentation updated for distribution
+;
+;External Routines Called:
+;	IMUPDATE	- to revise the update comments
+;----------------------------------------------------------------------------
+PRO IMREAD,root,x,y,object,comment,ion,wavc,mapi,order,rflags,updates,axis=ax,quiet=quiet
+
+	
+	IF N_PARAMS() EQ 0 THEN BEGIN MAN,'imread' & RETURN & ENDIF
+;
+;Initialize.
+;
+	axout  = 0
+	IF KEYWORD_SET(ax) THEN axout = FIX(ax>(-1)<1)
+;
+;Save root name in case an error occurs.
+;
+	root_save = root 
+	CLOSE,32  &  unit = 32
+;
+;Initial error control.
+;
+	ON_IOERROR,ESCAPE
+;
+;Initialize header keywords.  Header keywords are necessary so that the 
+;originals are not erased if a read error occurs.
+;
+	h_object  = STRING('','(A40)')
+	h_comment = STRING('','(A40)')
+	h_ion     = STRING('','(A40)')
+	h_wavc    = STRING('','(A40)')
+	h_mapi    = STRING('','(A40)')
+	h_order   = STRING('','(A40)')
+	h_npts    = STRING('','(A40)')
+	h_xtitle  = STRING('','(A40)')
+	h_ytitle  = STRING('','(A40)')
+	h_axflag  = STRING('','(A40)')
+	h_taflag  = STRING('','(A40)')
+	h_smflag  = STRING('','(A40)')
+;
+;Make sure root name contains no leading or trailing blanks and open the image.
+;File must contain a .dat extension, not included in the root.
+;
+	root = STRTRIM(root,2)
+;	rext='.dat'  &  IF root EQ STRUPCASE(root) THEN rext = '.DAT' 
+        rext='.dat'             ;jch -- don't want to use '.DAT'
+	IF STRPOS(root,'.dat') NE -1 THEN rext = ''
+	OPENR,unit,root+rext,/GET_LUN		
+;
+;Find the directory of image.  If the root name does not begin with a '/' then
+;attach the working directory name to the root name so that file progress can
+;be traced later.
+;
+	CD,CURRENT=dir
+	IF STRMID(root,0,1) NE '/' THEN root  = dir+'/'+root
+	if NOT keyword_set(quiet) then PRINT,'IMREAD(v6.0)::  Reading: ',root+rext
+;
+;Read the filename in the first line of the header.
+;
+	h_filename = STRING('','(A80)')
+	READF,unit,h_filename
+	h_filename = STRTRIM(h_filename,2)
+;
+;Read the next 3 lines of the header.
+;
+	blank = STRING('','(A80)')
+	READF,unit,blank
+	READF,unit,blank
+	READF,unit,blank
+;
+;Read the first  header keyword to see if file has been altered  by IMNORM.
+;If not, then go to generic read section and make header.
+;
+	filetest = 'XXXXXXXX'
+	READF,unit,'$(A8,A40)',filetest,h_object
+	IF filetest NE 'OBJECT =' THEN GOTO,MAKEHEADER
+;
+;Read remaining keywords as string variables for later conversion.
+;
+	                                      object  = STRTRIM(h_object,2)
+	READF,unit,'$(8x,A40)',h_comment   &  comment = STRTRIM(h_comment,2) 
+	READF,unit,'$(8x,A40)',h_ion       &  ion     = STRTRIM(h_ion,2)
+	READF,unit,'$(8x,A40)',h_wavc      &  wavc    = STRTRIM(h_wavc,2)
+	READF,unit,'$(8x,A40)',h_mapi      &  mapi    = STRTRIM(h_mapi,2)
+	READF,unit,'$(8x,A40)',h_order     &  order   = STRTRIM(h_order,2)
+	READF,unit,'$(8x,A40)',h_npts      &  npts    = STRTRIM(h_npts,2)
+	READF,unit,'$(8x,A40)',h_xtitle    &  xtitle  = STRTRIM(h_xtitle,2)
+	READF,unit,'$(8x,A40)',h_ytitle    &  ytitle  = STRTRIM(h_ytitle,2)
+	READF,unit,'$(8x,A40)',h_axflag    &  axflag  = STRTRIM(h_axflag,2)
+	READF,unit,'$(8x,A40)',h_smflag    &  smflag  = STRTRIM(h_smflag,2)
+	READF,unit,'$(8x,A40)',h_taflag    &  taflag  = STRTRIM(h_taflag,2)
+;
+;Assign appropriate data types to the keywords that are not strings.
+;
+	wavc    = FLOAT(wavc)
+	mapi    = FIX(mapi)
+	order   = FIX(order)
+	npts    = FIX(npts)
+	axflag  = FIX(axflag)
+	smflag  = FIX(smflag)
+	taflag  = FIX(taflag)
+	!x.title = xtitle
+	!y.title = ytitle
+	rflags  = [axflag,smflag,taflag]
+;
+;Read the header updates and store in variable updates if they exist.
+;
+	temp = STRARR(80,1,500)
+	For nu = 0,499 DO BEGIN
+		READF,unit,blank
+		IF STRMID(blank,0,1) NE '-' THEN BEGIN temp(nu) = blank
+		ENDIF ELSE GOTO,UPDATE_OUT
+	ENDFOR
+
+UPDATE_OUT:
+	nu = nu > 1  ; quick fix	
+	updates =  STRARR(80,1,nu)	
+	FOR j=0,nu-1 DO updates(j) = temp(j)
+	IMUPDATE,updates,';IMREAD(v6.0)::  '+root+rext+' '+!stime
+;
+;Read the temporary data array and convert to x and y.
+;
+	tempdata = FLTARR(2,npts)
+	READF,unit,'$(2E16.8)',tempdata
+	x = DOUBLE(TRANSPOSE(tempdata(0,*)))
+	y = DOUBLE(TRANSPOSE(tempdata(1,*)))
+;
+;Change axis if asked to do so with keyword passing.
+;
+	IF axout NE 0 THEN BEGIN
+		IF axout NE axflag THEN BEGIN
+			x = IMAXIS(x,wavc,axout)
+			axflag = axout
+			!x.title = 'Wavelength (A)'
+			IF axout EQ -1 THEN !xtitle = 'Velocity (km/sec)'
+		ENDIF
+	ENDIF
+;
+;Print caution message if filename does not agree with the header.
+;
+;	IF h_filename NE root+rext THEN BEGIN
+;	   PRINT,'IMREAD(v6.0)::  Caution!  Current filename and header do not match...'
+;	   WAIT,2.5
+;	ENDIF
+;
+;Close the data file and return safely to the main program.
+;
+	CLOSE,unit  &  FREE_LUN,unit
+	RETURN
+
+MAKEHEADER:
+;
+;First close the file and reopen it.
+;	
+	if NOT keyword_set(quiet) then PRINT,'IMREAD(v6.0)::  Internal file header being created...'
+	CLOSE,unit  &  FREE_LUN,unit
+	OPENR,unit,root+rext,/GET_LUN					
+;
+;Read the header produced by pre-IMNORM software.
+;
+	READF,unit,'$(1x,A40)',h_object
+	READF,unit,'$(7x,A3,9x,A3,8x,A10,8x,A8)',h_mapi,h_order,h_wavc,h_ion
+;
+;Trim the leading and trailing blanks from the keywords, convert types,and
+;assign all unassigned variables.
+;
+	object  = STRING(STRTRIM(h_object,2),'(A9)')
+	comment = STRTRIM(h_object,2)
+	ion     = STRTRIM(h_ion,2)
+	wavc    = STRTRIM(h_wavc,2)     &  wavc  = FLOAT(wavc)
+	mapi    = STRTRIM(h_mapi,2)     &  mapi  = FIX(mapi)
+	order   = STRTRIM(h_order,2)    &  order = FIX(order) 
+	axflag  = 1
+	smflag  = 0
+	taflag  = 0	
+	!x.title = 'Wavelength (A)'
+	!y.title = ' '
+	rflags = [axflag,smflag,taflag]
+;
+;Read the temporary data array and convert to x and y.
+;
+	x = DBLARR(20000)+999.999
+	y = DBLARR(20000)+999.999
+	row = 0
+	WHILE NOT EOF(unit) DO BEGIN
+		col1 = 0.0  &  col2 = 0.0
+		READF,unit,'$(2F10.3)',col1,col2
+		x(row) = col1  &  y(row) = col2  &  row = row + 1
+	ENDWHILE
+	loc = WHERE(x NE 999.999)
+	x = x(loc)  &  y = y(loc)
+;
+;Check to see if dealing in wavelengths or velocity.
+;
+	IF MIN(x) LT 0.0 THEN BEGIN
+		rflags = [-axflag,smflag,taflag]
+		!x.title = 'Velocity (km/sec)'
+		!c = 0
+	ENDIF
+;
+;Change axis if asked to do so with keyword passing.
+;
+	IF axout NE 0 THEN BEGIN
+		IF axout NE axflag THEN BEGIN
+			x = IMAXIS(x,wavc,axout)
+			axflag = axout
+			!x.title = 'Wavelength (A)'
+			IF axout EQ -1 THEN !xtitle = 'Velocity (km/sec)'
+		ENDIF
+	ENDIF
+;
+;Store update.
+;
+	updates    = STRARR(80,1,2)
+	updates(0) = ';Update History:'
+	updates(1) = ';IMREAD(v6.0)::  '+root+rext+' '+!stime	
+;
+;Close the data file and return safely to the main program.
+;
+	CLOSE,unit  &  FREE_LUN,unit  &  RETURN
+;------------------------------------------------------------------------------
+ESCAPE:
+	CLOSE,unit  &  FREE_LUN,unit
+	root = 'BADFILE'
+	PRINT,'IMREAD(v6.0)::  '+!err_string
+	RETURN  &  END

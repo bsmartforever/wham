@@ -1,0 +1,11 @@
+ms_size = size(ms_ha, /dim)
+
+x = indgen(ms_size[0]) # (intarr(ms_size[1]) + 1)
+y = (intarr(ms_size[0]) + 1) # indgen(ms_size[1])
+
+xyad, ms_ha_head, x, y, l, b, /gal
+
+ms_scale = HIST_EQUAL(ms_ha, minv = 7, maxv = 250)
+ms_map = map_patch(ms_scale, -l, b, $
+  xsize = xsize, ysize = ysize, xstart = xstart, ystart = ystart)
+;tv, ms_map, xstart, ystart, chan, xsize = xsize, ysize = ysize

@@ -1,0 +1,42 @@
+#!/bin/sh
+# old_to_new_ip.tcl \
+exec tclsh "$0" ${1+"$@"}
+
+if {$argc != 2} {
+    puts "Usage: $argv0 old.dat new.txt"
+}
+
+# Suck in the old .dat IP file
+set inchan [open [lindex $argv 0]]
+set all [read $inchan]
+close $inchan
+set lines [split $all \n]
+set l 0
+
+# Lots of assumptions here: first line is # of Gaussians, 
+#   then 3 lines for each: mean, fwhm, height
+
+set outchan [open [lindex $argv 1] w]
+
+puts $outchan [concat "#" [lindex $argv 1]]
+
+puts $outchan \
+"
+# This is an instrument profile file. Line that start with hashes
+# are comments. Comments may be interspersed among the data below. The
+# first line of the file (sans comment character) will be treated as a
+# label to identify this profile (e.g. in a chooser widget). The
+# following lines should contain three columns: mean, FWHM, and height.
+# The total integrated area of the components in this profile must
+# equal 1.0.
+"
+
+set ngauss [lindex $lines $l]
+incr l
+
+for {set i 0} {$i < $ngauss} {incr i} {
+    puts $outchan [format "%15.10f %15.10f %15.10f" {*}[lrange $lines $l $l+2]]
+    incr l 3
+}
+
+close $outchan

@@ -1,0 +1,180 @@
+<html>
+<head>
+<title>Buie IDL v8.0 Library changes</title>
+</head>
+<body>
+<h1>Changes to 
+<a href="idl.html">Buie IDL v8.0 Library</a></h1>
+<p>This is a reverse chronological list of changes to all
+library routines since the switch-over from the previous
+version of IDL.</p>
+<p>
+<a href="pro/looker.html">
+looker</a>: 
+2011/08/19, MWB, fixed a bug when dealing with multi-extension FITS files
+where there are 10 or more extensions.
+</p>
+<p>
+<a href="pro/msrcor.html">
+msrcor</a>: 
+2011/08/02, MWB, promoted all counters and pointers to long, this caused
+some odd problems when linking a lot of lists.
+</p>
+<p>
+<a href="pro/uniqueid.html">
+uniqueid</a>: 
+<font color="#d822c6">
+Written by Marc W. Buie, Southwest Research Institute, 2011/07/19
+</font>
+</p>
+<p>
+<a href="pro/ccdphot.html">
+ccdphot</a>: 
+2011/07/05, MWB, fixed bug that prevented saving calibration information
+if it had been edited
+</p>
+<p>
+<a href="pro/goodpoly.html">
+goodpoly</a>: 
+2011/04/29, MWB, added COEFFSIG keyword
+</p>
+<p>
+<a href="pro/photcal.html">
+photcal</a>: 
+2011/04/25, MWB, added RETURN_ALL and BAD keywwords
+</p>
+<p>
+<a href="pro/ois.html">
+ois</a>: 
+2011/04/12, MWB, fixed a bug in stamp selection for a rare case when
+the brightest good stamp is too close to the edge of the image.
+</p>
+<p>
+<a href="pro/wfc3model.html">
+wfc3model</a>: 
+2011/03/22, MWB, added IR camera support, added XSIZE/YSIZE keywords
+</p>
+<p>
+<a href="pro/hstpsf.html">
+hstpsf</a>: 
+2011/03/22, MWB, added support for WFC3/IR
+</p>
+<p>
+<a href="pro/finder.html">
+finder</a>: 
+2011/03/21, MWB, fixed some of the control logic related to the marker
+tools and added a new "marker to center" tool.
+</p>
+<p>
+<a href="pro/astsn2xy.html">
+astsn2xy</a>: 
+2011/03/21, MWB, drastic improvement to starting guess.  Works on anything
+now.  Didn't work before if x,y was rotated by 45 degrees.
+</p>
+<p>
+<a href="pro/mysqldocedit.html">
+mysqldocedit</a>: 
+2011/03/15, MWB, minor bug fix on one mysql command.
+</p>
+<p>
+<a href="pro/hstpsf.html">
+hstpsf</a>: 
+2011/03/11, MWB, modified to support TinyTim 7.1.  The new Z4 adjustment
+in v7.1 is not used by this program.  Z4 is directly
+modified by this routine as was always done.
+</p>
+<p>
+<a href="pro/siftstar.html">
+siftstar</a>: 
+2011/03/08, MWB, incorporated into the master library, minor fix on the
+contents of the sr2 files.
+</p>
+<p>
+<a href="pro/findsrc.html">
+findsrc</a>: 
+2011/03/04, MWB, fix to make sure results structure exists no matter what
+but if no objects found nobj is the only tag.
+</p>
+<p>
+<a href="pro/astanal.html">
+astanal</a>: 
+2011/02/21, MWB, enhancement to completely skip fitcoeff.dat entries
+where the files cannot be found.
+</p>
+<p>
+<a href="pro/siftstar.html">
+siftstar</a>: 
+2011/02/11, ERG, changed input to be complete filename string
+</p>
+<p>
+<a href="pro/siftstar.html">
+siftstar</a>: 
+2011/02/10, ERG, added numtoflist call
+</p>
+<p>
+<a href="pro/rescale.html">
+rescale</a>: 
+<font color="#d822c6">
+2011/02/07, Written by Marc W. Buie, Southwest Research Institute
+</font>
+</p>
+<p>
+<a href="pro/astrom.html">
+astrom</a>: 
+2011/01/28, MWB, added REFSAVE keyword
+</p>
+<p>
+<a href="pro/astrom.html">
+astrom</a>: 
+2011/01/27, MWB, added photometric zero-point error to header output and
+fit results return
+</p>
+<p>
+<a href="pro/parsekey.html">
+parsekey</a>: 
+2011/01/25, MWB, added UNKNOWN keyword
+</p>
+<p>
+<a href="pro/showsrc.html">
+showsrc</a>: 
+2011/01/16, MWB, added UINT as valid image input type.
+</p>
+<p>
+<a href="pro/siftstar.html">
+siftstar</a>: 
+<font color="#d822c6">
+2011/01/13, Written by Erin R. George, Southwest Research Institute
+</font>
+</p>
+<p>
+<a href="pro/axextend.html">
+axextend</a>: 
+<font color="#d822c6">
+2011/01/07, Written by Marc W. Buie, Southwest Research Institute
+</font>
+</p>
+<p>
+<a href="pro/photiso.html">
+photiso</a>: 
+<font color="#d822c6">
+2010/12/28 - Written by Marc W. Buie, Southwest Research Institute
+</font>
+</p>
+<p>
+<a href="pro/hemr.html">
+hemr</a>: 
+<font color="#d822c6">
+Written by Leslie Young, SwRI, 2010/12/28, cloned from bidr2 where similar
+</font>
+</p>
+<p>
+<a href="pro/basphote.html">
+basphote</a>: 
+2010/12/20, MWB, minor tweak to prevent negative photon noise.
+</p>
+<hr>
+<address>
+Created by modupdate.pro 2011/09/14 08:30:37 MST
+</address>
+</body>
+</html>

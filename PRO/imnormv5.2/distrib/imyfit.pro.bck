@@ -1,0 +1,155 @@
+;+
+;Kenneth Sembach
+;				IMYFIT.PRO
+;				Version 5.0
+;Created: 09/01/89
+;Last Revision: 05/02/99
+;
+;Program Description:
+;	This procedure fits a Legendre polynomial continuum to a spectrum
+;	and calculates associated errors as outline in Sembach & Savage 
+;	1992.
+;
+;Restrictions:
+;       Requires cursor (3 button mouse) input
+;
+;Screen Output: 
+;	Text  &  Graphics
+;
+;Use:
+;	IMYFIT,x,y,xarray,yarray,store,ycon,a,sigma,ycon_sig,ftflag
+;
+;On Input:
+;		x	:== x coordinate array
+;		y	:== y coordinate array
+;		xarray	:== x defined continuum array
+;		yarray  :== y defined continuum array
+;		store   :== stored continuum region array (2xn)
+;On Output:
+;		ycon	:== y calculated continuum array
+;		a	:== coefficient array
+;		sigma   :== sigma of fit
+;		ycon_sig:== error on continuum points 
+;		ftflag  :== continuum fitted flag (0=no,2=Legendre polynomial)
+;
+;Common Blocks / Structures:
+;	None
+;
+;Latest Update Comments:
+;	09/01/89  KRS	- Version 3.0
+;	03/21/91  KRS   - Version 4.0, general cleanup.
+;	04/23/91  KRS	- Version 4.1, Legendre polynomial implementation
+;	10/08/92  KRS	- Version 5.0, runs under Version 2 IDL.
+;       05/02/99  KRS   - Version 5.2, documentation updated for distribution
+;
+;External Routines Called:
+;	LEGERR		- to calculate Legenedre polynomial errors
+;	LEGFIT		- to calculate Legendre polynomial fit
+;	LEGPOLY		- to construct Legendre polynomial fit
+;----------------------------------------------------------------------------
+PRO IMYFIT,x,y,xarray,yarray,store,ycon,a,sigma,ycon_sig,ftflag
+
+        IF N_PARAMS() EQ 0 THEN BEGIN MAN,'imyfit' & RETURN & ENDIF
+;
+;Error control.
+;
+	ON_IOERROR,ESCAPE
+;
+;Overplot defined continuum regions.
+;
+	PRINT,'IMYFIT(v5.2)::  Current fit order: ', $
+	STRING(N_ELEMENTS(a)-1,'(I1)')
+LOOP:
+	liney1=[!cymax/30.0,-!cymax/30.0]+0.9*!cymax
+	FOR k=0,N_ELEMENTS(store)/2-1 DO BEGIN
+		OPLOT,[store(0,k),store(0,k)],liney1
+		OPLOT,[store(1,k),store(1,k)],liney1
+		OPLOT,[store(0,k),store(1,k)],[1.0,1.0]*0.9*!cymax
+	ENDFOR
+;
+;Print heading and instructions.
+;
+	READ,'IMYFIT(v5.2)::  Minimum order of fit (-1=clear,0=quit): ',minord 
+	minord = FIX(minord)  
+	IF minord EQ 0 THEN RETURN
+	IF minord LT 0 THEN BEGIN
+		PLOT,x,y  &  GOTO,LOOP
+	ENDIF
+	READ,'IMYFIT(v5.2)::  Maximum order of fit: ',maxord  
+	maxord = FIX(maxord) > minord
+	PRINT,'IMYFIT(v5.2)::  Working...'
+;
+;Check to be sure nord is not too large for array.
+;
+	IF maxord GE N_ELEMENTS(xarray) THEN GOTO,ESCAPE
+	maxord = maxord < 9
+	minord = minord < 9
+;
+;Scale xarray and x into appropriate range so that Legendre polynomial can be
+;fit over the range from -1 to + 1.
+;
+	maxx = MAX(ABS(xarray))  &  !c = 0
+	xarray = xarray/maxx
+	x = x / maxx
+;
+;Get Legendre polynomial fit and form continuum over all x.
+;
+	LEGFIT,xarray,yarray,minord,maxord,yfit,a,eps,chi2
+	ycon = LEGPOLY(x,a)
+;
+;Get sigma from Legenrde polynomial fit.  It is just square root of chi2 here.
+;
+	sigma = SQRT(chi2)
+;
+;Calculate mean signal to noise (added 09/01/89).
+;
+	sn = 0.0
+	IF sigma NE 0.0 THEN sn = AVG(yfit)/sigma
+;
+;Calculate signal to noise at 0 km/s.
+;
+	loc0 = SORT(ABS(x)) & loc0 = loc0(0)
+	sn0 = ycon(loc0) / sigma
+;
+;Overplot the derived continuum as a dashed curve.
+;
+	!p.linestyle = 2  &  OPLOT,x*maxx,ycon	&  !p.linestyle = 0
+;
+;Calculate the error bars on the continuum due to errors in the coefficients
+;of the Legendre polynomial fit.
+;
+	LEGERR,x,y,a,eps,chi2,ycon_sig	;chi2 = variance (=sigma^2) here
+;
+;Convert x and xarray back into the correct units.
+;
+	x = x * maxx
+	xarray = xarray * maxx
+;
+;Bound ycon so that plotting errors and arithmetic errors aren't important.
+;
+	maxy = MAX(y) & miny = MIN(y)
+	ycon = ycon > (-ABS(miny)*2) < (maxy*2)
+;
+;Print the fitting statistics to upper corner of screen.
+;
+	PRINT,'IMYFIT(v5.2)::  Information Dump Follows'
+	PRINT,'----------------------------------------'
+	PRINT,'Order used = ',maxord
+	PRINT,'# points   = ',STRING(N_ELEMENTS(yarray),'(I8)')
+	PRINT,'RMS sigma  = ',STRING(sigma,'(E9.3)')
+	PRINT,'Mean S/N   = ',STRING(sn,'(F8.2)')
+	PRINT,'Mean S/N(0)= ',STRING(sn0,'(F8.2)')
+	PRINT,'----------------------------------------'
+	PRINT,'IMYFIT(v5.2)::  End of Information Dump'
+        PRINT,'IMYFIT(v5.2)::  Hit any key to continue'
+        choice = GET_KBRD(1)
+;
+;Set fit flag since fit has been performed.  Use 2 for Legendre polynomial fit.
+;Older versions have normal polynomial fits with ftflag = 1.
+;
+	ftflag = 2
+	RETURN
+;------------------------------------------------------------------------------
+ESCAPE:
+	PRINT,'IMYFIT(v5.2)::  '+!err_string
+	RETURN  &  END

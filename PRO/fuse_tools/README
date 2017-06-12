@@ -1,0 +1,52 @@
+02/23/2007
+
+CF_EDIT is a powerful GUI-based tool to examine, combine, and
+manipulate the IDF files produced by CalFUSE.  To install it on
+your machine, follow these instructions.
+
+
+1) Install the IDL Astronomy User's Library, available here:
+
+http://idlastro.gsfc.nasa.gov/homepage.html
+
+
+2) Install the latest version (February 2007) of Don Lindler's
+ltools package:
+
+http://fuse.pha.jhu.edu/analysis/fuse_idl_tools.html
+
+
+3) System variables required for running the FUSE software are
+defined in the idl_startup.pro file in this directory.  To make it
+the default version for your IDL session, add a line similar to the
+following to your .cshrc file:
+
+setenv IDL_STARTUP /my_disk/idl/pro/ltools_022007/idl_startup.pro
+
+Or just copy the relevant lines into your current IDL_STARTUP file.
+
+
+4) If CalFUSE is installed on your machine, define the CF_CALDIR
+environment variable before starting up IDL:
+
+> setenv CF_CALDIR  [calfuse_directory]/v3.2/calfiles
+
+
+5) Fire up IDL and run cf_edit.
+
+> idl
+> cf_edit
+
+For complete instructions, please see the user's manual for CF_EDIT,
+which is in this directory.
+
+
+6) If IDL is not installed on your machine, you can run the "Virtual
+Machine" version of the program, cf_edit.sav, also found in this
+directory.  You must first install the IDL Virtual Machine software.
+Information and instructions are available here:
+
+    http://www.ittvis.com/idlvm
+
+
+Please address questions to fuse_support@pha.jhu.edu.

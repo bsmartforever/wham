@@ -1,0 +1,82 @@
+# This is the default parameter data file (.mpd) for makeSpect
+
+# The reader for this file is mpdRead.c  It ignores lines starting with
+# pound chars and ignores blank lines.  The format required is one parameter
+# per line.
+
+# Changed: 7/14/99 (LMH)
+
+# xc = 59.16
+# yc = 60.44
+
+# Changed: 2/14/01 (LMH)
+#xc = 59.10   
+#yc = 60.56
+
+# Xc, Yc Changed: 11/04/02 (GJM)
+# based on a ThAr line near Mg I (?)
+#xc = 58.57
+#yc = 60.90
+
+### NOTE: the above centers were accidentally used for all data taken
+### between 10/19/04 and 4/27/07. This copy of the default .mpd on
+### noam was not updated, unfortunately. Data taken out of the archive
+### from this time should be carefully checked for which ring-summing
+### center was used to make the spectra!
+
+# Xc, Yc changed again 10/19/04 (noam replaced)
+# based on ThAr line near Omega Ha
+# Had to take ThAr line at (78,117) tune
+#  because of mis-aligned etalons, this tune
+#  resulted in a uniform ring brightness
+
+#xc = 59.30
+#yc = 60.69
+
+# 10/31/08: PBO, take 2, very offset center
+#xc = 63.51
+#yc = 48.01
+
+# 3/8/08: CTIO, first cut
+#xc = 64.3
+#yc = 63.9
+
+# 3/8/08; CTIO second cut
+#xc = 64.44
+#yc = 63.88
+
+# 3/19/09  CTIO third cut
+#  See `wham/Recalibration/RingCentre/ for more info
+#xc = 63.37
+#yc = 62.79
+
+# 8/12/09 final cut
+#  See `wham/Recalibration/RingCentre/ for more info
+# xc = 63.38
+# yc = 62.84
+
+# 11/6/13 Chopra CTIO several year analysis tweak
+xc = 63.44
+yc = 62.94
+
+rmax = 60.0
+area = 85.0
+xoff = 37.50
+yoff = -21.25
+e = 0.04
+
+# KPNO 
+# bval = 605.66
+
+# CTIO 2010 - 4/2013 (fitted) average/baseline; note seasonal amplitude is +/- ~ 0.78 ADU
+bval = 607.944
+
+# KPNO dispersion (blue = ring 0; red = ring 132)
+#v0 = -112.31088
+#v1 = 2.083
+#v2 = -0.00036
+
+# CTIO dispersion with sign flipped (red = ring 0)
+v0 = 150.0
+v1 = -2.018
+v2 = -0.00034

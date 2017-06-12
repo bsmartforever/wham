@@ -1,0 +1,20 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; KAST ;;;
+
+kast_old_452_3306
+  ;; Prior to the new 2048L CCD (before 21 Sep 2008)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; LRIS ;;;
+lris_red_600_10000.sav
+  ;; New LRISr chip  (8/28/2009; JXP)
+
+lris_red_831_8200.sav
+  ;; New LRISr chip  (6/01/2010; JXP)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; DEIMOS ;;;
+deimos_600.sav  (5/10/2010;  JXP)
+  ;; Might only have Ne, Ar lamps on
+
+

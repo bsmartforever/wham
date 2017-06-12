@@ -1,0 +1,28 @@
+@colplstart
+device, file='idl.ps'
+
+bright = where(iha ge 0.43)
+
+;whammap, smc, 0, 0, iha, smimage, /use, $
+;  /lin, smooth=2, smgrid=0.1, tv=tv, mimage=mimage, $
+;  zmin=0.3*22.8, zmax=0.6*22.8, xmargin=[10,0], ymargin=[4,0], scale=1.5
+
+whammap, smc[bright], 0, 0, iha[bright], /use, $
+  /lin, zmin=0.3*22.8, zmax=0.6*22.8, xmargin=[6,0], ymargin=[4,0], $
+  scale=1.5, beamrad=0.25, cbottom=1, limits=[285, 320, -50, -33]
+  
+;@smc_mcels
+
+device, /close
+device, file='smc.ps'
+
+loadct,3
+tv, mimage, tv[0], tv[1], xsize=tv[2], ysize=tv[3]
+
+loadct,0
+tv, smc_map, xstart, ystart, xsize = xsize, ysize = ysize
+
+whammap, smc, 0, 0, /noerase, /nodata, xmargin=[10,0], ymargin=[4,0], scale=1.5
+
+device, /close
+set_plot,'x'

@@ -1,0 +1,28 @@
+There are three basic steps that I perform on the GBT data to get it into a form that's ready for science:
+
+1) Basic spectral calibration with GBTIDL's GETFS.PRO program.  I have a program called "reduce_session_getfs.pro" that will run this on full observing "session".  I normally call it like this:
+GBTIDL -> reduce_session_getfs,5,'GBT13B-068',smthoff=16
+It looks like I have a "reduce_session_tp.pro" (for "total power", i.e. NOT frequency-switched), but I forget exactly what it does.  The "smthoff" keyword is to smooth the reference spectrum which helps increase the S/N.
+
+2) Baseline removal.  Basically this fits a low-order polynomial to parts of the spectrum with no signal.  I have a fairly sophisticated program that fits a polynomial+sine wave because there's a low-level "standing-wave" signal in the GBT data that was affecting my search for faint MS emission.  The program is called "remove_baseline_indiv2.pro" and "remove_baseline_all2.pro" is a wrapper around this that runs it on all the sessions.  You run this on the output files from the previous step.  I run this in regular IDL like this:
+IDL>remove_baseline_indiv,'../data/HVCAGrid4_ses16_s38-62.fits',/save
+
+I have the RFI masking hard-coded into remove_baseline_indiv2.pro.  The most time intensive part of reducing the GBT data is finding the RFI and hard-coding it into the program.  There is some code at the top of that program that helps find the RFI, but it sometimes takes a couple iterations to get it all.  The "bad" values are replaced by NaNs and then ignored after that.
+
+3) Re-gridding and combining data into the final data cube.  I use my own custom IDL code to do this.  "grid_complexa_gal.pro" does this for Complex A.  It's set up to handle the whole Complex A area that we are interested in.  So we should be able to use it for the final combination/regridding of all the Complex A data.
+
+I've attached a tar file with all the GBT reduction programs that I've been using.  There might be some of my normal IDL programs that are not in there.  So let me know if you encounter an error due to a missing program and I can send it to you.
+
+So for normal frequency-switched data the only complicated thing is the masking.  Dealing with non-frequency-switched (total power) data is a different ball game and I need to look at what I did in the past and see if we can just use that.  It's just the first step that's different, I think.  Once it's calibrated steps 2 and 3 should be similar.
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+So I took a closer look at the "tp" stuff.  Note that the tp programs that I wrote were an attempt to use a different reduction method on the MS frequency-switched data.  It should be possible to use it on non-frequency-switched data, but we'll need to remove all the references to the "REF" spectra because they won't exist.
+
+reduce_session_tp.pro:  this does the "calibration" portion but does not remove the "instrumental profile" which is what the frequency-switched spectrum is used for.  This is done (or attempted) in remove_baseline_tp.pro.  If I find some time I'll try to modify the programs to work for the Chynoweth data.
+
+
+;;;;;;;;;;;;;;;;;;;;;;
+
+I've been working a bit more on the "tp" programs.  Here are the most recent versions.  It seems to be working okay.  I'm going to try to run it in the background on all the Chynoweth data in the Dropbox folder.  It might take a day or so.  I'll let you know what I come up with.  I might have to modify the baseline removal program depending on the results.

@@ -1,0 +1,737 @@
+;+
+;                                iNORM.PRO
+;                                Version 1.0
+;
+;Program Description:
+;       This procedure is a general purpose tool to analyze spectral lines.
+;       This suite of routines and their description have largely been adapted 
+;       from IMNORM that was originally created by Ken Sembach, but with some 
+;       critical changes.
+;
+;Restrictions: 
+;       Probably many
+;Use:
+;       iNORM,v,f,wavc,ef,wavc=wavc, root=root,ion=ion,fval=fval,gam=gam,object=object,redshift = redshift
+;       
+; Optional output:
+;                    An IDL save file with the following: 
+;                       v, f, e: untrimmed, unbinned input
+; vel,flux, eflux, fnorm, eform: output that can be trimmed, binned, normalized
+;     ncol,ncole1,ncole2,ncolez: column density and error
+;         w,w_es,w_ec,w_et,w_ez: equivalent width and error
+;                      va,vaerr: avg velociy and error
+;                      ba,baerr: b-value and error
+;                      m3,m3err: skewness and error
+;                       col3sig: 3 sigma upper limit
+;                         v1,v2: integration interval
+;                          shft: velocity shift 
+;                           ion: considered element
+;                          wavc: wavelength of the transition  
+;                          fval: f-value of the transition  
+;                      redshift: redshift of absorption
+;                           snr: signal-to-noise
+;                        object: generally background object name
+;
+;Latest Update Comments:
+;       04/12/13  NL    - Version 1.0
+;------------------------------------------------------------------------------
+PRO iNORM,v,f,ef=ef,wavc=wavc,root=root,ion=ion,fval=fval,gam=gam,object=object,redshift = redshift
+	
+	common SHARE, ncol,ncole1,ncole2,ncolez, w,w_es,w_ec,w_et,w_ez,va,vaerr,ba,baerr,m3,m3err,v1,v2,col3sig
+	common NOISE, set_noise,eyflag
+;
+loadct,39,/silent
+; initialize some values
+	ncol = 0.0
+	col = 0.
+	tot_err = 0.0
+	zero_err = 0.0
+	zero_errc = 0.0
+	ncole1 =  0.0
+	ncole2 =  0.0
+	ncolez = 0.0
+	ew = 0.0 
+	w = 0.0
+	w_es =  0.0
+	w_ec =   0.0
+	w_et =  0.0
+	w_ez = 0.0
+	m1 =  0.0
+	m1err =  0.0
+	m2 =  0.0
+	m2err =  0.0
+	m3 =  0.0
+	m3err =  0.0
+	zeroerr = 0.0
+	y_err= 0.0 
+	ycon_err= 0.0 
+	toterr= 0.0 
+	vaerr = 0.0 
+	va = 0.0
+	ba = 0.0 
+	baerr = 0.0
+	v1 = 0.0
+	v2 = 0.0
+	col3sig = 0.0
+	vshft = 0.0
+	set_noise = 'x' 
+	snr = 0.
+  ycon= fltarr(1) + 0. 
+  ycon_sig= fltarr(1) + 0. 
+  normflg = 0 
+	
+
+        IF N_PARAMS() EQ 0 THEN BEGIN 
+          print,' '
+          print,'USAGE: iNORM,v,f,ef=ef,wavc=wavc,root=root,ion=ion,fval=fval,gam=gam,object=object,redshift=redshift'
+          print, '        v :== velocity or wavelength array '
+          print,'          (if min(v)>0, then v:== wavelength )'
+          print, '        f :== flux array'
+          print, '        f :== flux error array'
+          print, '        wavc :== central wavelength of species to be analyzed'        
+          print, 'all these variables can just be defined in the file root'  
+          print,' '
+        RETURN
+        ENDIF
+;
+;Clear the window and bring it to the front.
+;
+	!x.range=[0,0] & !y.range=[0,0] 
+	!x.title=' ' & !y.title=' ' & !p.title= ' ' 
+	ERASE  &  WSHOW
+	PRINT,'$(/A1/)',' '
+	!x.range = 0  &  !y.range = 0
+	!psym=10
+;
+;Error control.
+;
+	ON_IOERROR,ERROR				
+;
+	PRINT,' '
+	PRINT,'iNORM::  WELCOME TO iNORM!  '
+	PRINT,' '
+
+;------------------------------------------------------------------------------
+RESET:
+;
+;This section declares any parameters that need to be defined before beginning
+;main program execution.   The variables are grouped according to their 
+;relationships with one another.
+;
+;Initialize startup variables.
+;
+	x = FLTARR(1)	
+	y = FLTARR(1)	
+	ey = fltarr(1)		
+	root_save = ' '
+;
+;Initialize support flags.
+;
+	atflag = 0			;Attribute file flag (0=no,1=yes).
+	axflag =-1			;Axis flag (-1=km/sec,1=Angstroms).
+	coflag = 0			;Continuum defined flag (0=no,1=yes).
+  eyflag = 1      ;error vector flag (0=no,1=yes).
+  ftflag = 0      ;Continuum fit flag (0=no,1=yes).
+	reflag = 0			;Spectrum read flag (0=no,1=yes).
+	smflag = 0			;Smoothing flag (0=no,1=yes).
+	rflags = [0,0,0]		;Combined read flag vector.
+;
+;Initialize continuum variables.
+;
+	store  = FLTARR(2,1) - 9.999	;Continuum region storage array.
+	xarray = FLTARR(1) - 9.999	;Continuum defined x array.
+	yarray = FLTARR(1) - 9.999	;Continuum defined y array.
+;
+;Initialize continuum fitting variables. 
+;
+	coeff = FLTARR(1,1) - 9.999	;Coefficients of fit.
+	sigma = 0.0			;Sigma of fit.
+	ycon  = FLTARR(1) - 9.999	;Continuum fit array.
+;
+;Initialize error bar variables.
+;
+	bsigma = 0.0			;Sigma to use for error bars.
+	ycon_sig = FLTARR(1) - 9.999
+;
+;Initialize system veriables.
+;
+	!x.range = 0  &  !y.range = 0
+;
+;------------------------------------------------------------------------------
+INITIAL_READ:
+;
+;Initialize if no parameter passed.  Jump to loop 4 to do the read.
+;
+	IF N_PARAMS() EQ 0 THEN BEGIN
+		reflag = 1
+		root = ' '
+	ENDIF
+	z,LOOP4
+;------------------------------------------------------------------------------
+CONTROL:
+;
+;Enter the portion of the program that controls program direction and 
+;execution.  This section plots the current plot, displays a command prompt,
+;and waits for a command character to be entered.
+;
+;Plot current data and display main mode prompt.
+;
+  !psym=10
+   if   normflg eq 1 then !ytitle = 'Normalized Flux'
+   if   normflg eq 0 then !ytitle = 'Flux'
+  
+	PLOT,x,y	
+	PRINT,'$(/A51)','iNORM::  (Type ? for available command list)'
+;
+;Get command charcter from user and go to appropriate mode.
+;
+CONTROL1:
+	loopnum = GET_KBRD(1)			;Wait for command key letter.
+	PRINT,'iNORM::  Executing command: ',loopnum
+	CASE loopnum OF
+		'c':	GOTO,LOOP1		;Define continuum
+		'f':	GOTO,LOOP2		;Fit continuum
+		'n': 	GOTO,LOOP3		;Normalize continuum
+		'r':	GOTO,LOOP4		;Read spectrum
+		'$': 	GOTO,LOOP5		;Convert wavelength to velocity
+		'*': 	GOTO,LOOP6		;Convert velocity to wavelength
+		'S': 	GOTO,LOOP7		;Save attributes
+		'K': 	GOTO,LOOP8		;Recall attributes
+		'e': 	GOTO,LOOP9		;Expand x axis
+		'X':	GOTO,LOOP10		;Reset everything
+		'M': 	GOTO,LOOP11		;Math mode
+		'g':  GOTO,LOOP12		;Get cursor position
+		'T':	GOTO,LOOP13		;Spectrum trimming
+		'N':	GOTO,LOOP14		;Calculate column density, equivalent width, kinematics
+		'C':	GOTO,LOOP15		;Gaussian convolution
+		's':	GOTO,LOOP16		;Shift spectrum
+		'G':  GOTO,LOOP17		;Gaussian fit (for rad vel)
+		'z':	GOTO,LOOP18		;Remove blemishes
+		'?':	GOTO,LOOP19		;Type help file
+    'R':  GOTO,LOOP20   ;Rebinning mode
+		'Q': 	GOTO,QUIT		  ;Quit iNORM
+		ELSE:	GOTO,LOOP0		;Ask again
+	ENDCASE		
+;------------------------------------------------------------------------------
+LOOP0:
+;Invalid command loop.
+;
+  PRINT,'iNORM::  Choose another command:'
+  PRINT,'iNORM::  Type ? for list of command ',loopnum
+	GOTO,CONTROL1
+;------------------------------------------------------------------------------
+LOOP1:
+;This section deals with the selection of a continuum for later polynomial 
+;fitting and normalization.  The user defines regions of the spectrum to be 
+;used as continuum.  The regions are stored in the array store.  ICONT is 
+;called to do the continuum definition.
+;
+;Make sure that the continuum definition is done in velocity space rather than
+;in wavelength space.  This keeps the matrix resulting from the polynomial
+;fit from becoming singular.
+;
+	IF axflag NE -1 THEN GOTO,CONTROL1
+	PRINT,'iNORM::  ##DEFINE CONTINUUM MODE##'
+	ICONT,x,y,ey,xarray,yarray,store,coflag
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP2:
+;This section is an extension of the previous section.  It fits a polynomial 
+;to the region defined in LOOP1.  IYFIT is called to do the fit.
+;
+;Make sure that the continuum fitting is done in velocity space rather than
+;in wavelength space.  This keeps the matrix resulting from the polynomial
+;fit from becoming singular.
+;
+	IF axflag NE -1 THEN GOTO,CONTROL1
+	PRINT,'iNORM::  ##FIT CONTINUUM MODE##'
+	IYFIT,x,y,ey,xarray,yarray,store,ycon,coeff,sigma,ycon_sig,ftflag
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP3:
+;This section normalizes the spectrum with the fit obtained in LOOP2.  The 
+;algorithm divides the spectrum into the calculated spectrum, but also re-estimate
+;the errors so that errors can be estimated in the integration of the profile. 
+;
+	IF ftflag EQ 0 THEN GOTO,CONTROL1		
+	PRINT,'iNORM::  ##CONTINUUM NORMALIZATION MODE##'
+	!p.linestyle = 2 
+	OPLOT,x,ycon, thick =2, color =  190
+	!p.linestyle = 0
+	!psym = 10
+  !ytitle = 'Flux'	
+	PRINT,'iNORM::  (n)ormalize   (q)uit'
+	choice = GET_KBRD(1)			
+	IF choice EQ 'n' THEN BEGIN
+	   !ytitle = 'Normalized Flux'
+	   normflg = 1
+		y    = y / ycon
+    ey = ey/ycon
+    ycon = ycon/ycon
+;redefine the normalize yarray 
+		for i = 0,n_elements(store)/2 - 1 do begin
+	   XLIMIT,x,store[0,i],store[1,i],x1,x2
+     if i eq 0 then yarray = [y(x1:x2)]
+     if i gt 0 then yarray = [yarray,y(x1:x2)]
+		endfor 		
+  LEGFIT,xarray,yarray,1,1,yfit,a,eps,chi2
+  LEGERR,x,y,a,eps,chi2,ycon_sig
+      sigma = SQRT(chi2)  
+      sn = AVG(yfit)/sigma
+		nm_update = 'iNORM::  Spectrum normalized  '+!stime
+		PRINT,nm_update
+	ENDIF
+	GOTO,CONTROL		
+;------------------------------------------------------------------------------
+LOOP4:
+; This section reads the input file. If no file define, it will read the input
+; data.  
+;
+  axout  = -1 ; default in velocity. 
+   !xtitle = 'Velocity (km/sec)'
+   !ytitle = 'Flux'
+   rext=''
+      
+   if keyword_set(root) then begin
+    root = STRTRIM(root,2)
+; detemine file type   
+        rext1=['.save','.sav','.fits','.txt','.dat','.asc']
+        flgfile = [0,0,1,2,2,2]
+        flgf = -1 
+        for j=0,n_elements(rext1)-1 do begin
+          test = file_test(root+rext1[j])
+          if (test eq 1 ) then begin 
+          rext = rext1[j]
+          flgf = flgfile[j]
+          endif
+          endfor 
+          if flgf eq -1 then begin
+                 PRINT,'iNORM::  Enter  type of files'
+                 PRINT,'iNORM::  (s)ave, (f)its, (a)scii or (q)uit'
+                  kind = GET_KBRD(1)
+                  rext = ''
+                  if kind EQ 'q'  then GOTO, ERROR
+                  if kind EQ 's' then  flgf = 0
+                  if kind eq 'f' then  flgf = 1
+                  IF kind EQ 'a' THEN  flgf = 2
+          endif           
+;       
+        if flgf eq 0 then begin 
+        PRINT,'iNORM::  Reading: ',root+rext
+        restore,root+rext
+        endif 
+        if flgf eq 1 then begin 
+; assume xidl fits file 
+           fluxi = file_search('*f.fits')
+           fluxi=fluxi[0]
+           erri = file_search('*e.fits')
+           erri=erri[0]
+           ef=xmrdfits(erri,0,hdr,/silent)  
+           f=xmrdfits(fluxi,0,hdr,/silent)  
+           object = sxpar(hdr,'TARGNAME')
+           v = 10^(sxpar(hdr,'CRVAL1') + findgen(n_elements(f))*sxpar(hdr,'cdelt1'))
+           PRINT,'iNORM::  Reading: ',root+rext
+            if min(v) gt 0 then begin
+                if not keyword_set(wavc) then begin 
+                 PRINT,'iNORM::  WARNING: undefined wavelength!'
+                 PRINT,'iNORM::  (w)avelength input or (q)uit'
+                 choice = GET_KBRD(1)
+                    IF choice EQ 'w' THEN BEGIN
+                    READ,'iNORM:: Enter wavelength: ',wavc   
+                     endif else begin 
+                     GOTO, ERROR
+                     endelse   
+                endif 
+                if not keyword_set(redshift) then redshift= 0.
+           vel = ((v - wavc)/wavc * 2.9979e5 -  2.9979e5 *redshift )/(1.+redshift) 
+           v = vel 
+           endif     
+        endif 
+        if flgf eq 2 then begin
+         PRINT,'iNORM::  Reading: ',root+rext
+        readcol,root+rext,v,f,ef,/silent
+ ; check if v is in km/s or A, if A, then convert to velocity
+            if min(v) gt 0 then begin
+                if not keyword_set(wavc) then begin 
+                 PRINT,'iNORM::  WARNING: undefined wavelength!'
+                 PRINT,'iNORM::  (w)avelength input or (q)uit'
+                 choice = GET_KBRD(1)
+                    IF choice EQ 'w' THEN BEGIN
+                    READ,'iNORM:: Enter wavelength: ',wavc  
+                       iFIND,wavc,tol,wave,ion,fval,gam
+                      ion = STRCOMPRESS(ion, /REMOVE_ALL)
+                      wavc = wave
+      print,'iNORM::  Do you want to change the name of the output file from '
+      print,'iNORM::          '+root+'_o.save to '+ion+STRTRIM(STRING(wavc,'(f8.1)'),2)+'_o.save?'     
+        kind = GET_KBRD(1)
+       if kind eq 'y' then begin 
+          root = ion+STRTRIM(STRING(wavc,'(f8.1)'),2)   
+       print,'iNORM::  output file name is '+root+'.save'
+       endif else begin 
+       print,'iNORM::  output file name is '+root+'_o.save'
+       endelse 
+                     endif else begin 
+                     GOTO, ERROR
+                     endelse   
+                endif 
+                if not keyword_set(redshift) then redshift= 0.
+           vel = ((v - wavc)/wavc * 2.9979e5 -  2.9979e5 *redshift )/(1.+redshift) 
+           v = vel 
+           endif     
+    endif
+       if n_elements(v) le 2 then  GOTO, ERROR
+  endif else begin 
+  ; check v is in km/s or A, if A, then convert to velocity
+            if min(v) gt 0 then begin
+                if not keyword_set(wavc) then begin 
+                 PRINT,'iNORM::  WARNING: undefined wavelength!'
+                 PRINT,'iNORM::  (w)avelength input or (q)uit'
+                 choice = GET_KBRD(1)
+                    IF choice EQ 'w' THEN BEGIN
+                    READ,'iNORM:: Enter wavelength: ',wavc   
+                      iFIND,wavc,tol,wave,ion,fval,gam
+                      ion = STRCOMPRESS(ion, /REMOVE_ALL)
+                      wavc = wave
+      print,'iNORM::  Do you want to change the name of the output file from '
+      print,'iNORM::          '+root+'_o.save to '+ion+STRTRIM(STRING(wavc,'(f8.1)'),2)+'_o.save?' 
+        
+        kind = GET_KBRD(1)
+       if kind eq 'y' then begin 
+          root = ion+STRTRIM(STRING(wavc,'(f8.1)'),2)   
+       print,'iNORM::  output file name is '+root+'.save'
+       endif else begin 
+       print,'iNORM::  output file name is '+root+'_o.save'
+       endelse 
+                     endif else begin 
+                     GOTO, ERROR
+                     endelse   
+                endif 
+                if not keyword_set(redshift) then redshift= 0.
+            vel = ((v - wavc)/wavc * 2.9979e5 -  2.9979e5 *redshift )/(1.+redshift) 
+            v = vel 
+            endif     
+    endelse 
+
+ ; define variable
+    if not keyword_set(object) then object=''
+    if not keyword_set(root) then begin
+    root = 'inorm' 
+    root_save = root
+    endif 
+      if not keyword_set(fval) then begin
+      iFIND,wavc,tol,wave,ion,fval,gam
+      ion = STRCOMPRESS(ion, /REMOVE_ALL)
+      wavc = wave
+      print,'iNORM::  Do you want to change the name of the output file from '
+      print,'iNORM::          '+root+'_o.save to '+ion+STRTRIM(STRING(wavc,'(f8.1)'),2)+'_o.save?' 
+        
+        kind = GET_KBRD(1)
+       if kind eq 'y' then begin 
+          root = ion+STRTRIM(STRING(wavc,'(f8.1)'),2)   
+       print,'iNORM::  output file name is '+root+'.save'
+       endif else begin 
+       print,'iNORM::  output file name is '+root+'_o.save'
+       endelse 
+       endif 
+    if not keyword_set(redshift) then redshift= 0.
+    if not keyword_set(ef) then begin 
+    ef = f*0.
+    eyflag = 0 
+    endif
+   x = v
+   y = f
+   ey = ef
+      !ytitle = 'Flux'
+   if n_elements(x) le 2 then begin 
+   print, 'iNORM::  Warning! Dimension of  v is <2...'
+   print, 'iNORM::  Not enough data to do spectral line analysis...'
+   GOTO, ERROR
+   endif 
+   	!mtitle = STRTRIM(object,2) + '   ' + ion + STRING(wavc,'(f10.3)')+ '   z = ' + STRTRIM(string(redshift,'(f10.3)'),2)
+     	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP5:
+;This section converts wavelength space to velocity space with a call to IMAXIS.
+;If the axis is already in velocity space, don't convert.
+;
+	IF axflag EQ -1 THEN GOTO,CONTROL1 	
+	PRINT,'iNORM::  ##AXIS CONVERSION MODE##'  
+	PRINT,'iNORM::  Wavelength axis converted to velocity'
+	x = iAXIS(x,wavc,-1)  &  axflag = -1
+	!x.range = iAXIS(!x.range,wavc,-1)
+	!xtitle = 'Velocity (km/sec)'
+    !psym=10
+	GOTO,CONTROL		
+;------------------------------------------------------------------------------
+LOOP6:
+;This section coverts velocity space to wavelength space with a call to iAXIS.
+;If the axis is already in wavelength space, don't convert.
+;
+	IF axflag EQ +1 THEN GOTO,CONTROL1 	
+	PRINT,'iNORM::  ##AXIS CONVERSION MODE##'  
+	PRINT,'iNORM::  Velocity axis converted to wavelength'
+	x = iAXIS(x,wavc,+1)  &  axflag = +1
+	!x.range = iAXIS(!x.range,wavc,+1)
+	   !psym=10
+	!xtitle = 'Wavelength (A)'
+	GOTO,CONTROL				
+;------------------------------------------------------------------------------
+LOOP7:
+;This section writes the attributes of a spectrum to a file.  
+;
+     if coflag ne 1 then begin
+     print, 'iNORM::  ##No defined continuum##'
+     endif else begin  
+	PRINT,'iNORM::  ##SAVE CONTINUUM MODE##'  
+	save,file=root+'.att',ycon,ycon_sig,xarray,yarray,store,coeff,sigma,bsigma,coflag,ftflag
+	IF !err EQ 0 THEN PRINT,'iNORM::  Attributes saved successfully'
+  endelse
+  GOTO,CONTROL		
+;------------------------------------------------------------------------------
+LOOP8:
+;This section reads the attributes of a spectrum from a file. 
+;Don't read attributes if the current axis units are 
+;Angstroms.
+;
+	IF axflag NE -1 THEN GOTO,CONTROL
+	PRINT,'iNORM::  ##READ ATTRIBUTES MODE##'  
+	!err = 0
+	temp = file_search(root+'.att',count = ct)
+	if ct eq 0 then begin 
+	print,'No Continuum saved'
+	GOTO,CONTROL  
+	endif else begin 
+	restore,root+'.att'
+	PRINT,'iNORM::  Attributes read successfully'
+  ENDELSE 
+	IF N_ELEMENTS(ycon) NE N_ELEMENTS(y) THEN BEGIN
+	     PRINT,'iNORM::  Caution!  Attributes do not match spectrum'
+	     PRINT,'iNORM::  Caution!  Current attributes have no value'
+	ENDIF
+	GOTO,CONTROL	
+;------------------------------------------------------------------------------
+LOOP9:
+;This section expands a spectrum by calling IMEXPND.  Call IMEXPND to do the 
+;axis expansion in the x and y directions.
+;				
+	PRINT,'iNORM::  ##AXIS EXPANSION MODE##'  
+	iEXPND,x,y  &  GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP10:
+;This section resets the program and rereads the last file read.
+;
+;Print heading and ask user if program is to be reset.
+;
+	PRINT,'iNORM::  RESET MODE'
+	reset = 'y'
+	READ,'iNORM::  Reset variables for current file? ',reset	
+	IF STRMID(STRLOWCASE(reset),0,1) EQ 'y' THEN BEGIN
+		PRINT,'iNORM::  Resetting iNORM'
+		if root_save eq 'inorm' then undefine, root
+		GOTO,RESET
+	ENDIF ELSE PRINT,'iNORM::  No reset performed'
+	GOTO,CONTROL
+;
+;If user wants to reset program then goto RESET.
+;
+	choice = GET_KBRD(1)
+	IF choice EQ 'y' THEN GOTO,RESET
+	GOTO,CONTROL		
+;------------------------------------------------------------------------------
+LOOP11:
+;This section performs mathematical manipulations on the data.
+;
+;Call iMATH to perform the math. Note that at the exit, it return to the original
+; spectrum [do we need to change that?]
+;
+	PRINT,'iNORM::  ##MATH MANIPULATION MODE##'
+	iMATH,x,y
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP12:
+;This section allows the user to get the position of the cursor.
+;Call iCURS to get the cursor position.
+;
+	PRINT,'iNORM::  ##CURSOR INFORMATION MODE##'  
+	iCURS			
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP13:
+;This section allows a spectrum to be trimmed -- error bars and continuum
+;are trimmed as well.  Call IMTRIM to trim the spectrum.
+;
+	PRINT,'iNORM::  ##TRIM SPECTRM MODE##'
+	iTRIM,x,y,ey,ycon,ycon_sig,coflag
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP14:
+;This section integrates N, EW, v, b plots over a given velocity range.
+;If no continuum exists, then return to CONTROL if profile is not 
+;normalized.
+;
+;If wavelength space has not been chosen then return to CONTROL
+;
+  IF axflag NE -1 THEN BEGIN  
+   PRINT,'iNORM::  Cannot enter mode - enter velocity space first'
+   GOTO,CONTROL1
+  ENDIF
+
+	IF coflag NE 1 THEN BEGIN	
+	  print, 'iNORM::  No continuum is defined. Is the profile normalized?'
+	         test  = GET_KBRD(1) 
+         IF test EQ 'y' THEN BEGIN
+         ycon = y/y
+         ycon_sig = ycon * 0.  
+         coflag = 1
+          if eyflag eq 0 then print,'iNORM::  WARNING - No error defined'
+         endif else begin 
+         PRINT,'iNORM::  Cannot enter mode - no continuum defined'
+         GOTO,CONTROL1
+         ENDELSE 
+  ENDIF       
+
+;
+;Call iCOL_PREP to do the column density calculation.
+;
+	PRINT,'iNORM::  ##APPARENT COLUMN DENSITY MODE##'
+	iCOL_PREP,x,y,ey,ycon,sigma,ycon_sig,wavc,fval
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP15:
+;This section allows smoothing of the spectrum via a Gaussian function.
+;
+;Call iSMEAR to do the gaussian smoothing.
+;
+	PRINT,'iNORM::  ##GAUSSIAN CONVOLUTION MODE##'
+	READ,'iNORM::  Enter Gaussian FWHM (0=quit): ',fwhm
+	fwhm = fwhm*1.0 > 0
+	IF ((fwhm GT 0) AND (fwhm LT ((MAX(x)-MIN(x))/5.2))) THEN BEGIN
+		PRINT,'iSMEAR::  Smoothing spectrum'
+    ysmear = iSMEAR(x,y,fwhm)
+   eysmear = (iSMEAR(x,ey^2/fwhm,fwhm))
+		loc = WHERE(ysmear NE y,cnt)
+		IF cnt NE 0 THEN BEGIN
+		   IF axflag EQ -1 THEN BEGIN
+		     sm_update = ';IMSMEAR::  Gaussian convolution FWHM = '+STRTRIM(fwhm,2)+' km/s  '+!stime
+		   ENDIF ELSE BEGIN
+		     sm_update = ';IMSMEAR::  Gaussian convolution FWHM = '+STRTRIM(fwhm,2)+' A  '+!stime
+		   ENDELSE
+		     y = ysmear
+		     ey = sqrt(eysmear)
+		     smflag = 1
+		ENDIF ELSE PRINT,'iSMEAR::  No smoothing'
+	ENDIF ELSE PRINT,'iSMEAR::  No smoothing'
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP16:
+;This section allow shifting of a spectrum.  Do it here since it is easy to do.
+;
+	PRINT,'iNORM::  ##SHIFT SPECTRUM MODE##'
+	READ,'iNORM::  Enter shift (in x axis unit - 0 to quit): ',vshft
+	!psym = 10
+	!p.linestyle = 2  &  OPLOT,x+vshft,y  &  !p.linestyle = 0
+	IF vshft NE 0 THEN BEGIN
+		x = x + vshft
+		IF axflag EQ -1 THEN BEGIN
+			sh_update = 'iNORM::  Shift applied = ' $
+				+STRING(vshft)+' km/s  '+!stime
+		ENDIF ELSE BEGIN
+			sh_update = 'iNORM::  Shift applied = ' $
+				+STRING(vshft)+' A  '+!stime
+		ENDELSE
+		PRINT,sh_update
+	ENDIF ELSE PRINT,'iNORM::  No shift applied'
+
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP17:
+;This section fits a Gaussian to a spectral region.  Call IMGAUS to do the fit.
+;
+	PRINT,'iNORM::  ##GAUSSIAN FIT MODE##'	
+	iGAUSS,x,y
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP18:
+;This section removes blemishes from data.
+;
+;Call iBLEM to remove the blemish.
+;
+	PRINT,'iNORM::  ##BLEMISH REMOVAL MODE##'
+	iBLEM,x,y,ey,yorig
+	GOTO,CONTROL	
+;------------------------------------------------------------------------------
+LOOP19:
+;
+;This section calls iHELP to print out a short help listing.
+;
+	PRINT,'iNORM::  ##HELP MODE##'
+	iHELP
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+LOOP20:
+;This section allows a spectrum to be rebinned -- error bars and continuum
+;are rebinned as well.  Call iREBIN to rebin the spectrum.
+;
+	PRINT,'iNORM::  ##REBIN SPECTRM MODE##'
+	iREBIN,x,y,ey,ycon,ycon_sig,coflag	
+	GOTO,CONTROL
+;------------------------------------------------------------------------------
+ERROR:
+  PRINT,'iNORM::  Warning!  Recovering from IO error...'
+  PRINT,'iNORM::  Type Q to exit...'
+	GOTO,CONTROL	
+;------------------------------------------------------------------------------
+QUIT:
+;This section is used as an escape to end the routine.
+; It will save the results. 
+	
+	       PRINT,'iNORM::  Do you want to save the results?'
+	     if n_elements(sigma) eq 0 then sigma=0. 
+       if n_elements(ycon) eq 0 then ycont=1. 
+       if n_elements(ycon_sig) eq 0 then ycon_sig=-1 
+	       test  = GET_KBRD(1) 
+         IF test EQ 'y' THEN BEGIN
+         nco = n_elements(ycon)
+         nnx = n_elements(x)
+         nnv = n_elements(v)
+         if nco ne nnx then print, 'iNORM::  data and continuum arrays are not the same dimension!'
+         if nnx lt nnv then begin 
+         print,'iNORM::  Warning! saving trimmed spectrum...'
+         endif 
+      loadct,39, /silent
+               if nnx lt nnv then  plot,x,y,psym= 10, title = 'Saved trimmed spectrum...'
+               if nnx eq nnv then  plot,x,y,psym= 10, title = 'Saved spectrum...'
+      oplot, x,ycon,color = 190,thick=2
+; Calculate error spectrum assuming Poisson statistics unless FPN was used:
+           snr = avg(ycon)/sigma
+           kind = set_noise
+         IF kind EQ 'x' THEN BEGIN
+; no error defined.
+                sigma0 = y*0.   
+         endif else if kind eq 'f' THEN BEGIN
+                sigma0 = y*0.+snr
+        endif else if kind eq 'u' then begin 
+        sigma0 = ey/ycon
+        endif else if kind eq 'p' then begin 
+                sigma0 = sqrt(abs(y/ycon))/snr       
+         endif  
+        nanindex = where((finite(sigma0) eq 0), countnan)
+        IF countnan NE 0 THEN sigma0(nanindex) = 1.0e-5
+        fnorm  = y/ycon
+        efnorm =  sqrt((ycon_sig/ycon)^2.0 + sigma0^2.0)
+        vel = x    
+        flux = y
+        eflux = ey
+        cont = ycon 
+        econt = ycon_sig
+; check if root has already .save: 
+;        help,root
+       SAVE,file=root+'_o.save',v,f,ef,vel,fnorm,efnorm,flux,eflux,cont,econt,$
+       wavc,ion,fval,gam,object, redshift,vshft,snr,$
+       ncol, ncole1,ncole2,ncolez, w,w_es,w_ec,w_et,w_ez,va,vaerr, ba, baerr, m3, m3err,v1,v2,col3sig      
+      print,'iNORM:: Saving resuls and data in....   '+root+'_o.save' 
+ENDIF
+	PRINT,'iNORM::  Ending iNORM session...'
+	retall
+	END
+

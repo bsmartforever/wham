@@ -1,0 +1,32 @@
+;+
+;Kenneth Sembach
+;                               IMJOURNAL.PRO
+;                                Version 5.2
+;Created: 7/24/93
+;Last Revision: 05/02/99
+;Maintains session log for procedure IMNORM, nothing fancy.
+;Updates file counter to prevent overwrites.
+;------------------------------------------------------------------------------
+PRO IMJOURNAL,name
+	IF STRPOS(GETENV('HOME'),'[') EQ -1 THEN BEGIN
+		files = FINDFILE('imnorm.journal.*')
+		loc = N_ELEMENTS(files)-1
+		name = files(loc)
+		ver = STRTRIM(FIX(STRMID(name,15,3))+1,2)
+		IF ver LT 10 THEN ver = '0'+ver
+		IF ver LT 100 THEN ver = '0'+ver
+		name = 'imnorm.journal.'+ver
+	ENDIF ELSE BEGIN
+		files = FINDFILE('imnorm.journal_*')
+		loc = N_ELEMENTS(files)-1
+		name = files(loc)
+		loc = STRPOS(name,']')+1
+		name = STRTRIM(STRMID(name,loc,25),2)
+		ver = STRTRIM(FIX(STRMID(name,15,3))+1,2)
+		IF ver LT 10 THEN ver = '0'+ver
+		IF ver LT 100 THEN ver = '0'+ver
+		name = 'imnorm.journal_'+ver
+	ENDELSE
+	RETURN
+	END		
+

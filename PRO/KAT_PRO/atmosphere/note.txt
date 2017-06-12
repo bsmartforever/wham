@@ -1,0 +1,7 @@
+From Osterbrock's 1997 papers
+
+See on-line data:
+http://adsabs.harvard.edu/abs/2000yCat.3211....0O
+
+Discription:
+This catalog provides a list of atmospheric OH and O2 lines that are useful for wavelength calibration of high resolution spectra. Tables of observed OH lines, and calculated wavelengths for molecular oxygen (O2) are given; the journal of the observations is found in the "Tables 1" section below, and spectra with identified lines are provided as postscript figures, which are summarized in the "figs.dat" file. (3 data files).

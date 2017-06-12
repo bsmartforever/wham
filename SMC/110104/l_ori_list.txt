@@ -1,0 +1,4 @@
+./ha/combo/l_ori-012629.fts
+./ha/combo/l_ori-013038.fts
+./ha/combo/l_ori-035358.fts
+./ha/combo/l_ori-035822.fts

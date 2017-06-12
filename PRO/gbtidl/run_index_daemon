@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# This script runs the index daemon 
+
+# move to this directory
+exe=`which "$0"`
+if [ -L $exe ]
+then
+    true_path=$(ls -l $exe)
+    true_path=${true_path##*>}
+else
+    true_path=$exe
+fi
+cd `dirname $true_path`
+
+# run the index daemon
+./gbtidl ./gbtidl_index_daemon
+

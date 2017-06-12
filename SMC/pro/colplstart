@@ -1,0 +1,3 @@
+set_plot,'ps'
+device,/land
+device,/color,bits=8

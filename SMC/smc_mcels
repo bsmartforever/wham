@@ -1,0 +1,12 @@
+smc_size = size(smc_ha, /dim)
+
+x = indgen(smc_size[0]) # (intarr(smc_size[1]) + 1)
+y = (intarr(smc_size[0]) + 1) # indgen(smc_size[1])
+
+xyad, smc_ha_head, x, y, l, b, /gal
+
+smc_scale = HIST_EQUAL(smc_ha, minv = 7, maxv = 250)
+smc_map = map_patch(smc_scale, -l, b, $
+  xsize = xsize, ysize = ysize, xstart = xstart, ystart = ystart)
+  
+;tv, smc_map, xstart, ystart, chan, xsize = xsize, ysize = ysize

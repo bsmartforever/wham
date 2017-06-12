@@ -1,0 +1,32 @@
+@colplstart
+device, file=' ms.ps'
+
+loadct,3
+whammap, ms[nostars], 0, 0, iha[nostars], smimage, /use, $
+  /lin, smooth=2, smgrid=0.1, tv=tv, mimage=mimage, $
+  zmin=0.01, zmax=0.6, xmargin=[10,0], ymargin=[4,0], scale=1.5, /MAGELLANIC, /GAL2MAG
+
+;@smc_mcels
+
+;device, /close
+;device, file='smc.ps'
+
+;loadct,3
+;tv, mimage, tv[0], tv[1], xsize=tv[2], ysize=tv[3]
+
+;loadct,0
+;tv, smc_map, xstart, ystart, xsize = xsize, ysize = ysize
+
+;whammap, smc[nostars], 0, 0, /noerase, /nodata, $
+;  xmargin=[10,0], ymargin=[4,0], scale=1.5
+
+gal2mag, ms_hi.glon,ms_hi.glat, mlon, mlat
+
+x = -reduceto180(ms_hi.glon)
+y = ms_hi.glat
+z = nhi
+;contour, z, x, y, /irr, /overplot, levels=[.5, 1, 5, 20], $
+;  c_thick = [1,2,3,4], c_color = color(255), c_linestyle = [0]
+
+device, /close
+set_plot,'x'

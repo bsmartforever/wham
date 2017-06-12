@@ -1,0 +1,5 @@
+r = round([0, intarr(127), reverse(255-indgen(127)*1.5), 255])
+g = [0, intarr(254)+75, 255]
+b = round([0, 255-indgen(127)*1.5, intarr(127), 255])
+
+tvlct, r, g, b

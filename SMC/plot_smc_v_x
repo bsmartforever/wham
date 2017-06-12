@@ -1,0 +1,30 @@
+set_plot,'x'
+
+@mycmap
+;loadct,33
+
+sub = where((smc.block)[nostars] ge 2012 and (smc.block)[nostars] le 2035)
+bright = where(iha[nostars[sub]] ge 0.43*22.8)
+
+wset_or_create, 0
+
+whammap, smc[nostars[sub[bright]]], 0, 0, mean_v[nostars[sub[bright]]], /use, $
+  /lin, zmin=+120, zmax=+180, xmargin=[10,0], ymargin=[4,0], $
+  scale=1.5, beamrad=0.25, cbottom=1, limits=[285, 320, -50, -33]
+  
+x = -reduceto180(smc_hi.glon)
+y = smc_hi.glat
+z = nhi
+contour, z, x, y, /irr, /overplot, levels=[.5, 1, 5, 20], $
+  c_thick = [1,2,3,4], c_color = color(255), c_linestyle = [0]
+
+wset_or_create, 1
+
+bright_hi = where(nhi ge 0.5) ;; x 10^20 cm^-2
+whammap, smc_hi[bright_hi], 0, 0, vhi[bright_hi], /use, $
+  /lin, zmin=+120, zmax=+180, xmargin=[10,0], ymargin=[4,0], $
+  scale=1.5, beamrad=0.25, cbottom=1, limits=[285, 320, -50, -33]
+
+contour, z, x, y, /irr, /overplot, levels=[.5, 1, 5, 20], $
+  c_thick = [1,2,3,4], c_color = color(255), c_linestyle = [0]
+  

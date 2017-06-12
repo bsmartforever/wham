@@ -1,0 +1,13 @@
+# KPNO - Standard (3 Gaussian)
+
+# This is an instrument profile file. Line that start with hashes
+# are comments. Comments may be interspersed among the data below. The
+# first line of the file (sans comment character) will be treated as a
+# label to identify this profile (e.g. in a chooser widget). The
+# following lines should contain three columns: mean, FWHM, and height.
+# The total integrated area of the components in this profile must
+# equal 1.0.
+
+   0.3553010000   16.8713000000    0.0241949670
+   0.0000000000   33.9057000000    0.0062826631
+  -0.3389970000    9.3658000000    0.0339766200

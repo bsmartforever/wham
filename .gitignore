@@ -1,0 +1,15 @@
+*.fits
+*.fts
+*~
+*.pdf
+*.ps
+*.eps
+*.log
+150623/*
+allblocks
+*.spe
+*.notes
+*.js
+*doc*
+PRO/idlutils/*
+.svn*

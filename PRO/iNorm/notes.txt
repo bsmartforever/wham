@@ -1,0 +1,189 @@
+iNorm is a set of routines for analyzing absorption spectral lines by Nicolas Lehner. 
+
+It is largely based on imnorm, but with some critical changes: 
+
+- iNorm is more versatile in terms of reading files. It can read IDL files (preferred), X fits files, ascii files (this is still basic, and should improve in the future)
+- The error flux vector coming from the data reduction pipeline is now used to estimate the errors on the different parameters. If no error vector is present, it will estimate the errors as in imnorm. 
+- iNorm allows you to estimate the column density, line statistic, equivalent width without defining the continuum (that's useful if profiles are already normalized). 
+- iNorm  allows you to normalize the profile and then to estimate the physical parameters with error bars. 
+- iNorm allows you to rebin the data irrespective of the bin size vs. array size. 
+- iNorm allows you to save everything in a save file (data, continuum, estimated parameters). 
+
+There are some other changes, in particular the command `E' and `L' have been removed. 
+
+Below are some examples and caveats. If you look for more information, look in the inorm.pro file. 
+
+The routines can be found at 
+https://www.dropbox.com/sh/v0jmpbmzr8kisfh/WER-wmsZnn
+
+There is one path that you will need to update, which is in the ifind.pro file:
+  path = '~/Dropbox/IDL/iNorm/lists/'
+
+In the directory lists you have the default line list ilines.save (that you can modify using ilines.dat and ireadlinelist.pro). 
+
+
+If you find any  bugs or something wrong, let me know. If there are things that are not in yet, but you think should be, let me know. 
+
+Enjoy, 
+
+Nicolas
+
+PS: for whose who  have used my preparation program to analyze spectra using imnorm (e.g., in KOA), there is a quick fix from the existing files using the program imnormtoinorm.save.pro (just run the program where the current imnorm files are, i.e., where  there should also be *o.save file, which will create a new *i.save that you can then use in "inorm,v,f,root='filei').
+
+PPS: There is also a file (inormsave.pro) showing an example on how to create inorm save files (you will need to update the path to the line list in that file). 
+ 
+USAGE: iNORMSAVE,root=root,redshift=redshift, vlsr = vlsr, object=object
+
+Easiest way to use this is to supply a *.save file with the following variables: wave, flux, err defined.
+
+E.g., save,wave,flux,err,file='root.save'
+
+Note that if you also define vlsr, redshift (not z), and object, they will be used and you wont have to 
+define them as keywords.
+
+E.g., save,object,vlsr,redshift,wave,flux,err,file='root.save'
+
+LMC HD33133 FUSE data example:
+  
+file='h_p11745_nvo.fits'
+;Creates fuse structure with wave, flux, and error tags
+fuse = mrdfits(file,1,header,/fscale)
+;Gets more header info to extract position and object name.
+a=mrdfits(file,0,hdr0,/silent)
+
+ra = float(strtrim(sxpar(hdr0,'RA_TARG'),2))*1.d  ;deg
+dec = float(strtrim(sxpar(hdr0,'DEC_TARG'),2))*1.d  ;deg
+object = strtrim(sxpar(hdr0,'TARGNAME'),2)
+redshift = strtrim(sxpar(hdr0,'Z'),2)
+
+glactc,ra,dec,2000,gl,gb,1,/degree
+lsrvel, gl, gb, vlsr, vmb,/silent
+
+wave=fuse.wave
+flux=fuse.flux
+sigma_up=fuse.error
+err=fuse.error
+save,redshift,object,vlsr,wave,flux,err,file=object+'.save'
+
+
+------------------------------------
+USAGE: iNORM,v,f,ef=ef,wavc=wavc,root=root,ion=ion,fval=fval,gam=gam,object=object,redshift=redshift
+
+
+Examples: 
+
+- If there is no input file, the input can either be velocity, flux, error vectors or velocity and flux (velocity  can be either velocity or wavelength):
+=======================================
+IDL> readcol,'spec-MRK205-SII-1253:0',w,f,ef                            
+IDL> inorm,w,f,ef=ef
+iNORM::  WELCOME TO iNORM!  
+iNORM::  WARNING: undefined wavelength!
+iNORM::  (w)avelength input or (q)uit
+iNORM:: Enter wavelength: 1253.805
+iNORM::  Do you want to change the name of the output file from 
+iNORM::          inorm_o.save to SII1253.8_o.save?
+iNORM::  Executing command: N
+iNORM::  No continuum is defined. Is the profile normalized?		; in this case, it is not normalized, so answer n(o)
+iNORM::  Cannot enter mode - no continuum defined
+														; ...... then type 'c', 'f', 'N' 
+iNORM::  Executing command: Q
+iNORM::  Do you want to save the results? ; typing 'y' will save the file and overwrite it if it already exists. 
+=======================================
+Important caveat:  In the save file you will have the parameters as they were last defined.
+
+What is in the output is defined in inorm.pro. 
+
+- If there is an input file, I assume there is a wavelength or velocity vector, flux vector, and error vector. 
+	 - For IDL file, I assume further that the variables are defined as v,f, ef where v is velocity. 
+	 - The program currently reads only X fits file and expect only one file_f.fits and one file_e.fits in the current directory (the program uses file_search to define the file). If there is more than one, it will only consider the first one in the list. 
+
+If the files have the following extentions '.save','.sav','.fits','.txt','.dat','.asc', the program will read the files automatically the data. Other you will be prompted to define the file types: 
+
+IDL> inorm,v,f,root='spec-MRK205-SII-1253:0
+iNORM::  WELCOME TO iNORM!  
+iNORM::  Enter  type of files
+iNORM::  (s)ave, (x).fits, (a)scii or (q)uit	;enter a 
+iNORM::  Reading: spec-MRK205-SII-1253:0
+iNORM::  WARNING: undefined wavelength!
+iNORM::  (w)avelength input or (q)uit
+iNORM:: Enter wavelength: 1253.805
+iNORM::  Do you want to change the name of the output file from 
+iNORM::          spec-MRK205-SII-1253:0_o.save to SII1253.8_o.save?
+..............
+
+
+IDL> inorm,v,f,root='SII1253i_o.save'  
+iNORM::  WELCOME TO iNORM!  
+iNORM::  Enter  type of files
+iNORM::  (s)ave, (x).fits, (a)scii or (q)uit		; prompted because .save is included in file name
+iNORM::  Reading: SII1253i_o.save		; note that you can output save file as input
+..............
+
+
+IDL> inorm,v,f,root='SII1253i_o'       
+iNORM::  WELCOME TO iNORM!  
+iNORM::  Reading: SII1253i_o.save
+       iNORM::  (Type ? for available command list)	 ; not prompted to define file because only root is included. 
+..............
+
+IDL> inorm,v,f,wavc= 1253.805,root='Q1206+1155a_f.fits',redshift = 2.36279
+iNORM::  WELCOME TO iNORM!   
+iNORM::  Enter  type of files
+iNORM::  (s)ave, (x).fits, (a)scii or (q)uit
+iNORM::  Reading: Q1206+1155a_f.fits
+iNORM::  Do you want to change the name of the output file from 
+iNORM::          Q1206+1155a_f.fits_o.save to SII1253.8_o.save?
+iNORM::  output file name is Q1206+1155a_f.fits_o.save
+..............
+
+IDL> inorm,v,f,wavc= 1253.805,root='Q1206+1155a_f',redshift = 2.36279     
+iNORM::  WELCOME TO iNORM!  
+iNORM::  Reading: Q1206+1155a_f.fits
+iNORM::  Do you want to change the name of the output file from 
+iNORM::          Q1206+1155a_f_o.save to SII1253.8_o.save?
+iNORM::  output file name is Q1206+1155a_f_o.save
+..............
+
+IDL> inorm,v,f,wavc= 1253.805,root=' ',redshift = 2.36279            
+iNORM::  WELCOME TO iNORM!  
+iNORM::  Enter  type of files
+iNORM::  (s)ave, (x).fits, (a)scii or (q)uit ; type 'x 'if fits files - ***BLANK root name only works for FITS file****
+NORM::  Reading: 
+iNORM::  Do you want to change the name of the output file from 
+iNORM::          inorm_o.save to SII1253.8_o.save?
+
+===========================================================
+iNORM::  Executing command: ?
+iNORM::  ##HELP MODE##
+iHELP::  Information Dump Follows
+-----------------------------------------
+Single keystroke commands in iNORM are
+case sensitive.  The following modes are
+currently available.  Questions and/or
+problems can be addressed to Nicolas Lehner
+at nlehner@nd.edu.
+ 
+  Key     iNORM mode
+  ---    -------------
+ 
+   c	Continuum definition mode
+   C	Gaussian convolution mode
+   e	Axis expansion mode			; can't really use that mode with N afterwards
+   f	Continuum fitting mode
+   g	Get cursor mode
+   G	Gaussian + polynomial fit mode
+   K	Read attributes mode
+   M	Math mode						; limited use for spectral analysis
+   n	Continuum normalization mode
+   N	Apparent column density mode
+   Q	Quit mode
+   R	Rebin spectrum mode
+   s	Shift spectrum mode
+   S	Save attributes mode
+   T	Trim spectrum mode
+   X	Reset mode
+   z	Linearly interpolate across blemishes
+   $	Axis conversion mode [wavelength -> velocity]
+   *	Axis conversion mode [velocity -> wavelength]
+   ?	Help mode
+

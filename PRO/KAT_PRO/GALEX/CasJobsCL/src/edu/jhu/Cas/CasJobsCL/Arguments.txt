@@ -1,0 +1,36 @@
+PRIMARY
+
+b, tables
+j, jobs
+o, output
+r, run
+s, submit
+v, servers
+x, execute
+e, extract
+
+
+DEPENDENT
+
+a, type
+b, table
+f, file
+F, force
+j, jobid
+n, taskname
+q, queue
+s, status
+t, target
+y, days
+d, download
+
+
+
+
+GENERAL
+
+h, --help
+--commands
+--general-commands
+v, --verbose
+w, wsid
